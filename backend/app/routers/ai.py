@@ -17,8 +17,8 @@ router = APIRouter(prefix="/api/ai", tags=["ai"])
 
 @router.get("/status")
 def status():
-    return {"generative_ai": llm.available(), "model": AI_MODEL if llm.available() else None,
-            "engines": ["statistics", "machine-learning", "rule-based NLP"] + (["Claude"] if llm.available() else [])}
+    return {"generative_ai": llm.available(), "model": AI_MODEL if llm.available() else None, "provider": llm.PROVIDER,
+            "engines": ["statistics", "machine-learning", "rule-based NLP"] + ([llm.PROVIDER] if llm.available() else [])}
 
 
 class AskIn(BaseModel):

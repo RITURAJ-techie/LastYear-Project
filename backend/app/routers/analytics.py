@@ -85,7 +85,7 @@ def insights(dataset_id: int, ai: bool = False, user: User = Depends(get_current
     result["ai_available"] = llm.available()
     if ai:
         if not llm.available():
-            raise HTTPException(400, "Generative AI is not configured. Set ANTHROPIC_API_KEY to enable AI narratives.")
+            raise HTTPException(400, "Generative AI is not configured. Set SARVAM_API_KEY to enable Sarvam AI narratives.")
         result["ai_narrative"] = cached(ds, "ai_narr", {}, lambda: ins.ai_narrative(ds.name, result))
     return result
 

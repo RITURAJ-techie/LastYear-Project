@@ -51,8 +51,8 @@ export default function Layout() {
         </nav>
         <div className="mx-3 mb-3 rounded-lg border border-line p-3 text-xs">
           <div className="flex items-center gap-1.5 font-medium text-ink"><Database className="h-3.5 w-3.5" /> Analytics engines</div>
-          <div className="mt-1 text-muted">Statistics · ML · NLP{ai?.generative_ai ? " · Claude" : ""}</div>
-          {ai && !ai.generative_ai && <div className="mt-1 text-[11px] text-muted">Set ANTHROPIC_API_KEY to add generative AI narratives.</div>}
+          <div className="mt-1 text-muted">Statistics · ML · NLP{ai?.generative_ai ? " · Sarvam AI" : ""}</div>
+          {ai && !ai.generative_ai && <div className="mt-1 text-[11px] text-muted">Set SARVAM_API_KEY to add Sarvam AI narratives.</div>}
         </div>
         <div className="flex items-center gap-2 border-t border-line px-4 py-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accentsoft text-xs font-semibold text-accent">{user?.name?.[0]?.toUpperCase()}</div>

@@ -3,7 +3,7 @@
 Two engines:
 * ``rules``  – a built-in semantic parser that maps words to columns, aggregations,
   groupings, time grains, filters and top-N, then reuses the chart query engine.
-* ``ai``     – Claude translates the question into DuckDB SQL (validated read-only).
+* ``ai``     – Sarvam AI translates the question into DuckDB SQL (validated read-only).
 """
 from __future__ import annotations
 

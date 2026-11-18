@@ -45,7 +45,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 | **Segmentation** | **K-Means** clustering with k chosen automatically by silhouette score, a PCA projection and a profile of each segment. |
 | **Insights & recommendations** | A rule engine turns the findings into ranked, plain-language insights, each with a recommended action. It knows whether higher is better for a metric (rising cost is flagged as a risk, not a success). Also produces an executive summary and action plan, and an HTML report you can download. |
 | **Ask your data (NLQ)** | Ask questions in plain English, such as "revenue by region per quarter", "top 5 brands", or "how many orders in 2024 in North?". A built-in semantic parser understands aggregations, groupings, time grains, filters, top-N and synonyms. Answers come as a chart, a table and the generated SQL, and can be pinned to a dashboard. |
-| **Optional generative AI** | With `ANTHROPIC_API_KEY` set, Claude writes executive briefings from the computed findings and turns free-form questions into validated, read-only SQL. **Everything works without it.** |
+| **Optional generative AI** | With `SARVAM_API_KEY` set, Sarvam AI writes executive briefings from the computed findings and turns free-form questions into validated, read-only SQL. **Everything works without it.** |
 | **SQL console** | Read-only SQL over your own warehouse tables, with a statement guard and file-system access disabled. |
 | **Platform** | JWT authentication, per-user data isolation, light/dark/system theme, responsive layout, CSV/Excel/JSON export. |
 
@@ -60,7 +60,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 | ETL / analytics | **pandas, NumPy, SciPy** | Extraction, cleaning and statistics. |
 | Machine learning | **scikit-learn** (Isolation Forest, Random Forest, K-Means), custom Holt-Winters | Anomalies, drivers, segmentation and forecasting. |
 | Connectors | SQLAlchemy (any SQL database), `requests` (REST), openpyxl/pyarrow (Excel/Parquet) | Covers the common source types. |
-| Generative AI (optional) | **Anthropic Claude** (`claude-opus-5-5`) via the official `anthropic` SDK | Narratives and text-to-SQL. Only aggregated findings and schema are sent, never raw rows. |
+| Generative AI (optional) | **Sarvam AI** (`sarvam-105b`, an Indian sovereign LLM) via the official `sarvamai` SDK | Narratives and text-to-SQL. Only aggregated findings and schema are sent, never raw rows. |
 | Deployment | Docker (multi-stage), docker-compose | A single container serves both the API and the UI. |
 
 ## Architecture
@@ -85,7 +85,7 @@ flowchart LR
     ML[Isolation Forest · Random Forest · K-Means]
     IN[Insight & recommendation rules]
     NL[NL-to-query parser]
-    LLM[Claude (optional)]
+    LLM[Sarvam AI LLM (optional)]
   end
   UI[React UI<br/>dashboards · insights · ask · warehouse]
   F & D & A --> E
@@ -167,9 +167,9 @@ You can regenerate the sample data at any time with `python backend/scripts/gene
 │   │   │   ├── relationships.py # cross-dataset PK/FK discovery
 │   │   │   ├── dashboard.py     # automatic dashboard generation + widget resolver
 │   │   │   ├── insights.py      # insight & recommendation engine
-│   │   │   ├── nlq.py           # natural-language questions (rules + optional Claude)
+│   │   │   ├── nlq.py           # natural-language questions (rules + optional Sarvam AI)
 │   │   │   └── sqlguard.py      # read-only SQL validation
-│   │   ├── ai/llm.py            # optional Claude client with graceful fallback
+│   │   ├── ai/llm.py            # optional Sarvam AI client with graceful fallback
 │   │   └── routers/             # auth, datasets, analytics, dashboards, warehouse, ai
 │   ├── scripts/generate_sample_data.py
 │   ├── sample_data/             # orders.csv, products.xlsx, erp.db, marketing.json
@@ -217,8 +217,8 @@ Copy `.env.example` to `.env`. Every setting is optional:
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | – | Turns on Claude narratives and text-to-SQL |
-| `INSIGHTFLOW_AI_MODEL` | `claude-opus-5-5` | Model for the generative features |
+| `SARVAM_API_KEY` | – | Turns on Sarvam AI narratives and text-to-SQL (get a key at dashboard.sarvam.ai) |
+| `INSIGHTFLOW_AI_MODEL` | `sarvam-105b` | Model for the generative features |
 | `INSIGHTFLOW_DATA_DIR` | `backend/data` | Location of the warehouse, metadata DB and uploads |
 | `INSIGHTFLOW_METADATA_URL` | SQLite in the data dir | Any SQLAlchemy URL (for example PostgreSQL) |
 | `INSIGHTFLOW_SECRET_KEY` | auto-generated | JWT signing key |

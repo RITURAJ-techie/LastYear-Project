@@ -8,7 +8,7 @@
 
 Organisations generate large volumes of data in databases, spreadsheets and external applications. Because this data is fragmented, processed by hand, of inconsistent quality and served by limited reporting tools, timely and reliable insight is hard to get. Commercial BI tools such as Power BI help with visualisation, but they expect users to model data, write measures and design every report themselves.
 
-This project presents **InsightFlow AI**, an integrated, automated analytics platform. It collects data from multiple sources (files, SQL databases and REST APIs), runs a fully logged ETL pipeline that cleans and standardises the data, and maintains a layered central data warehouse (staging, core, marts and a conformed date dimension). It then **understands the data on its own**: it infers semantic types, analytical roles and cross-dataset relationships. Finally it **generates** interactive dashboards, KPIs, trend analyses, forecasts, anomaly reports, key-driver analyses and ranked, plain-language recommendations. Users can also ask questions in natural language. An optional large-language-model layer (Anthropic Claude) adds executive narratives and free-form text-to-SQL, but every core feature works with the built-in statistical and machine-learning engine alone.
+This project presents **InsightFlow AI**, an integrated, automated analytics platform. It collects data from multiple sources (files, SQL databases and REST APIs), runs a fully logged ETL pipeline that cleans and standardises the data, and maintains a layered central data warehouse (staging, core, marts and a conformed date dimension). It then **understands the data on its own**: it infers semantic types, analytical roles and cross-dataset relationships. Finally it **generates** interactive dashboards, KPIs, trend analyses, forecasts, anomaly reports, key-driver analyses and ranked, plain-language recommendations. Users can also ask questions in natural language. An optional large-language-model layer (Sarvam AI) adds executive narratives and free-form text-to-SQL, but every core feature works with the built-in statistical and machine-learning engine alone.
 
 ---
 
@@ -63,7 +63,7 @@ InsightFlow AI combines ETL, data warehousing, analytics, machine learning and d
 | Data processing | pandas, NumPy, SciPy |
 | Machine learning | scikit-learn (Isolation Forest, Random Forest, K-Means), custom Holt-Winters |
 | Connectors | SQLAlchemy, requests, openpyxl, pyarrow |
-| Generative AI (optional) | Anthropic Claude via the official SDK |
+| Generative AI (optional) | Sarvam AI (`sarvam-105b`) via the official `sarvamai` SDK |
 | Security | JWT (PyJWT), PBKDF2 password hashing |
 | Testing / DevOps | pytest, FastAPI TestClient, Docker, docker-compose |
 

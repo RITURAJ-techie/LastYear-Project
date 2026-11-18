@@ -1,9 +1,9 @@
-"""Optional generative-AI layer (Anthropic Claude).
+"""Optional generative-AI layer (Sarvam AI).
 
 Every feature in InsightFlow works without it – the statistical/ML engine and
-rule-based NLP produce insights and answer questions. When Anthropic
-credentials are present (``ANTHROPIC_API_KEY``), Claude is used to write richer
-executive narratives and to translate free-form questions into SQL.
+rule-based NLP produce insights and answer questions. When a Sarvam AI key is
+present (``SARVAM_API_KEY``), Sarvam's LLM (default ``sarvam-105b``) is used to
+write richer executive narratives and to translate free-form questions into SQL.
 
 Only aggregated findings and schema metadata (column names, types, a few
 sample values) are sent to the model – never the full dataset.
@@ -12,53 +12,64 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from functools import lru_cache
 
 from ..config import AI_DISABLED, AI_MODEL
 
 log = logging.getLogger("insightflow.ai")
 
+PROVIDER = "Sarvam AI"
+_THINK = re.compile(r"<think>.*?</think>", re.S | re.I)
+
+
+def _api_key() -> str | None:
+    return os.getenv("SARVAM_API_KEY") or os.getenv("SARVAM_API_SUBSCRIPTION_KEY")
+
 
 def available() -> bool:
     if AI_DISABLED:
         return False
-    return bool(os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_AUTH_TOKEN"))
+    return bool(_api_key())
 
 
 @lru_cache(maxsize=1)
 def _client():
-    import anthropic
+    from sarvamai import SarvamAI
 
-    return anthropic.Anthropic(max_retries=2, timeout=120.0)
+    return SarvamAI(api_subscription_key=_api_key(), timeout=120.0)
 
 
 def complete(system: str, prompt: str, max_tokens: int = 8000, effort: str = "low") -> str | None:
-    """Single-turn completion. Returns None on any failure so callers can fall back."""
+    """Single-turn chat completion. Returns None on any failure so callers can fall back."""
     if not available():
         return None
-    import anthropic
+    from sarvamai.core.api_error import ApiError
 
     try:
-        response = _client().beta.messages.create(
+        response = _client().chat.completions(
             model=AI_MODEL,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ],
+            reasoning_effort=effort,  # none | low | medium | high | max
             max_tokens=max_tokens,
-            system=system,
-            messages=[{"role": "user", "content": prompt}],
-            output_config={"effort": effort},
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
+            temperature=0.2,
         )
-    except anthropic.RateLimitError as exc:
-        log.warning("Claude rate limited: %s", exc)
+    except ApiError as exc:
+        log.warning("Sarvam API error %s: %s", exc.status_code, exc.body)
         return None
-    except anthropic.APIStatusError as exc:
-        log.warning("Claude API error %s: %s", exc.status_code, exc)
+    except Exception as exc:  # noqa: BLE001 - network/timeout errors must not break analytics
+        log.warning("Sarvam request failed: %s", exc)
         return None
-    except anthropic.APIConnectionError as exc:
-        log.warning("Claude connection error: %s", exc)
+    if not response.choices:
         return None
-    if response.stop_reason == "refusal":
-        log.info("Claude declined the request")
+    choice = response.choices[0]
+    if str(choice.finish_reason) == "content_filter":
+        log.info("Sarvam declined the request")
         return None
-    text = "".join(b.text for b in response.content if b.type == "text").strip()
+    text = choice.message.content or ""
+    # reasoning normally arrives in `reasoning_content`; strip inline <think> blocks defensively
+    text = _THINK.sub("", text).strip()
     return text or None

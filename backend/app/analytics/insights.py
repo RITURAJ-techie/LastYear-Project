@@ -273,7 +273,7 @@ AI_SYSTEM = (
 
 
 def ai_narrative(dataset_name: str, result: dict[str, Any]) -> str | None:
-    """Ask Claude for an executive briefing based on computed findings (no raw data is sent)."""
+    """Ask Sarvam AI for an executive briefing based on computed findings (no raw data is sent)."""
     payload = {"dataset": dataset_name, "findings": result["insights"][:15], "facts": result["facts"]}
     prompt = (
         "Write an executive briefing in Markdown with these sections:\n"

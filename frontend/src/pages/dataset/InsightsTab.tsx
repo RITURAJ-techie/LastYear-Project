@@ -64,7 +64,7 @@ export default function InsightsTab({ ds }: { ds: Dataset }) {
         })}
       </div>
       <div className="space-y-5">
-        <Card title="AI executive briefing" subtitle={data.ai_available ? "Claude writes a narrative from the computed findings (no raw rows are sent)" : "Optional – requires ANTHROPIC_API_KEY on the server"}>
+        <Card title="AI executive briefing" subtitle={data.ai_available ? "Sarvam AI writes a narrative from the computed findings (no raw rows are sent)" : "Optional – requires SARVAM_API_KEY on the server"}>
           {ai ? <Markdown text={ai} /> : (
             <>
               <Button variant="primary" icon={<Sparkles className="h-4 w-4" />} onClick={askAi} loading={aiBusy} disabled={!data.ai_available} className="w-full">Generate briefing</Button>

@@ -20,7 +20,7 @@ function AnswerView({ turn, onPin }: { turn: Turn; onPin: (t: Turn) => void }) {
     <div className="space-y-3">
       <Markdown text={a.answer} />
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
-        <Badge tone={a.mode === "ai" ? "accent" : "neutral"}>{a.mode === "ai" ? "Claude · text-to-SQL" : "Built-in semantic parser"}</Badge>
+        <Badge tone={a.mode === "ai" ? "accent" : "neutral"}>{a.mode === "ai" ? "Sarvam AI · text-to-SQL" : "Built-in semantic parser"}</Badge>
         <span>{a.explanation}</span>
       </div>
       <div className="rounded-xl border border-line bg-surface p-3">

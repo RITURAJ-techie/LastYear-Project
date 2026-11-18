@@ -35,9 +35,9 @@ SEED_DEMO = os.getenv("INSIGHTFLOW_SEED_DEMO", "true").lower() in {"1", "true", 
 SCHEDULER_ENABLED = os.getenv("INSIGHTFLOW_SCHEDULER", "true").lower() in {"1", "true", "yes"}
 CORS_ORIGINS = [o.strip() for o in os.getenv("INSIGHTFLOW_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
 
-# Generative AI (optional). Without credentials the platform uses its built-in
-# statistical/rule-based engine for every feature.
-AI_MODEL = os.getenv("INSIGHTFLOW_AI_MODEL", "claude-opus-5-5")
+# Generative AI via Sarvam AI (optional). Without SARVAM_API_KEY the platform uses
+# its built-in statistical/rule-based engine for every feature.
+AI_MODEL = os.getenv("INSIGHTFLOW_AI_MODEL", "sarvam-105b")
 AI_DISABLED = os.getenv("INSIGHTFLOW_AI_DISABLED", "false").lower() in {"1", "true", "yes"}
 
 for d in (DATA_DIR, UPLOAD_DIR):
