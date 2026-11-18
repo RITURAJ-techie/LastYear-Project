@@ -118,6 +118,11 @@ def rules_parse(question: str, table: str, profile: dict[str, Any]) -> dict[str,
         y = yr.group(0)
         filters.append({"column": t, "op": "between", "value": [f"{y}-01-01", f"{y}-12-31"]})
 
+    id_cols = [c for _, c in mentioned if cols[c]["role"] == "identifier"]
+    if not m_cols and agg is None and id_cols and id_cols[0] != group:
+        # "weekly orders" / "customers per region": a counted entity, not a measure. A row key
+        # (unique per row) means a plain row count; otherwise count distinct entities.
+        agg = "count" if cols[id_cols[0]]["unique_pct"] >= 99 else "count_distinct"
     if agg == "count" and not m_cols:
         y = [{"column": "*", "agg": "count", "label": "count"}]
     elif agg == "count_distinct" and (d_cols or mentioned):

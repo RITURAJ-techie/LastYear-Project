@@ -40,7 +40,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 | **Custom dashboards** | Chart builder with a live preview (12 chart types, any measure/aggregation/grouping/series/time grain). Widgets can be moved, resized and edited. Global filters (date range with presets, multi-select dimensions) apply to every widget. Each chart can be shown as a table or as SQL, and dashboards can be printed or saved as PDF. |
 | **Statistics** | Descriptive stats, distributions, skew, and Pearson/Spearman correlation matrices with p-values. |
 | **Trends & forecasting** | Picks the time grain automatically, fits a linear trend with a significance test, detects seasonality, and forecasts with **Holt-Winters** (grid-searched parameters, 95% prediction band, backtest MAPE). Also flags anomalous periods using a robust z-score. |
-| **Anomaly detection** | Multivariate **Isolation Forest** with per-record explanations ("cost is unusually high, 7.6σ"). |
+| **Anomaly detection** | **Relationship-aware Isolation Forest**: adds log-ratio features for correlated measures so records that break a normal relationship (for example cost > revenue) are caught too, with per-record explanations ("cost is unusually high, 7.6σ"). |
 | **Key-driver analysis** | A **Random Forest** model ranks which factors explain a target metric. It excludes "component" measures (such as cost inside revenue) so they aren't reported as drivers. |
 | **Segmentation** | **K-Means** clustering with k chosen automatically by silhouette score, a PCA projection and a profile of each segment. |
 | **Insights & recommendations** | A rule engine turns the findings into ranked, plain-language insights, each with a recommended action. It knows whether higher is better for a metric (rising cost is flagged as a risk, not a success). Also produces an executive summary and action plan, and an HTML report you can download. |
@@ -203,13 +203,20 @@ All endpoints are under `/api` and need a bearer token, except login, register a
 | `GET /warehouse/overview\|objects\|relationships\|runs` · `POST /warehouse/join` · `POST /warehouse/sql` | Warehouse |
 | `GET /ai/status` · `POST /ai/ask` · `GET /ai/suggestions/{id}` | Natural-language questions |
 
-## Testing
+## Testing & evaluation
 
 ```bash
 cd backend
 pytest -q
 ```
-The suite covers the cleaning rules, semantic inference, the query engine (time grains, filters, series), trend detection and forecasting, the SQL guard (blocks DDL, multiple statements, other users' tables and file access), an end-to-end API flow (upload → ETL → every analysis → dashboards → NLQ → SQL → export → refresh), per-user data isolation, and the SQL database connector.
+The suite covers the cleaning rules, semantic inference, the query engine (time grains, filters, series), trend detection and forecasting, the SQL guard (blocks DDL, multiple statements, other users' tables and file access), an end-to-end API flow (upload → ETL → every analysis → dashboards → NLQ → SQL → export → refresh), per-user data isolation, the SQL database connector, and the Sarvam AI client (mocked).
+
+A reproducible experimental evaluation (cleaning accuracy, type inference, foreign-key discovery, anomaly detection and forecasting against baselines, NL question accuracy, and scalability up to 1M rows) is in [docs/evaluation/RESULTS.md](docs/evaluation/RESULTS.md):
+```bash
+cd backend
+python scripts/evaluate.py
+```
+Material for the research paper and project report is in [docs/RESEARCH_AND_REPORT_CONTEXT.md](docs/RESEARCH_AND_REPORT_CONTEXT.md).
 
 ## Configuration
 

@@ -1,0 +1,686 @@
+{
+  "E1_cleaning": {
+    "rows_raw": 5120,
+    "rows_clean": 5000,
+    "rows_true": 5000,
+    "duplicates_injected": 120,
+    "duplicates_removed": 120,
+    "column_type_accuracy": "7/7",
+    "currency_parse_accuracy": 1.0,
+    "date_format_accuracy": 1.0,
+    "label_normalisation_accuracy": 1.0,
+    "null_placeholder_recall": 1.0,
+    "null_placeholder_false_positives": 0,
+    "invalid_number_recall": 1.0,
+    "invalid_number_false_positives": 0,
+    "imputed_values": 300,
+    "untouched_cells_preserved": 1.0,
+    "region_revenue_cell_match_before": 0.93,
+    "region_revenue_cell_match_after": 1.0,
+    "transform_seconds": 0.123,
+    "quality_score_before_after": [
+      98.8,
+      100.0
+    ]
+  },
+  "E2_semantic_inference": {
+    "columns": 31,
+    "role_accuracy": 1.0,
+    "per_role": {
+      "dimension": "10/10",
+      "identifier": "6/6",
+      "measure": "10/10",
+      "text": "2/2",
+      "time": "3/3"
+    },
+    "errors": [],
+    "detail": [
+      {
+        "column": "order_id",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "identifier",
+        "correct": true
+      },
+      {
+        "column": "customer_id",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "identifier",
+        "correct": true
+      },
+      {
+        "column": "sku",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "identifier",
+        "correct": true
+      },
+      {
+        "column": "transaction_uuid",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "identifier",
+        "correct": true
+      },
+      {
+        "column": "email",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "email",
+        "correct": true
+      },
+      {
+        "column": "invoice_no",
+        "expected_role": "identifier",
+        "predicted_role": "identifier",
+        "semantic_type": "identifier",
+        "correct": true
+      },
+      {
+        "column": "revenue",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "currency",
+        "correct": true
+      },
+      {
+        "column": "profit",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "currency",
+        "correct": true
+      },
+      {
+        "column": "quantity",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "count",
+        "correct": true
+      },
+      {
+        "column": "unit_price",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "currency",
+        "correct": true
+      },
+      {
+        "column": "discount_rate",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "percentage",
+        "correct": true
+      },
+      {
+        "column": "delivery_days",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "numeric",
+        "correct": true
+      },
+      {
+        "column": "rating",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "numeric",
+        "correct": true
+      },
+      {
+        "column": "temperature",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "numeric",
+        "correct": true
+      },
+      {
+        "column": "clicks",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "count",
+        "correct": true
+      },
+      {
+        "column": "salary",
+        "expected_role": "measure",
+        "predicted_role": "measure",
+        "semantic_type": "currency",
+        "correct": true
+      },
+      {
+        "column": "region",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "geo",
+        "correct": true
+      },
+      {
+        "column": "country",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "geo",
+        "correct": true
+      },
+      {
+        "column": "segment",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "categorical",
+        "correct": true
+      },
+      {
+        "column": "product_category",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "categorical",
+        "correct": true
+      },
+      {
+        "column": "payment_method",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "categorical",
+        "correct": true
+      },
+      {
+        "column": "status",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "categorical",
+        "correct": true
+      },
+      {
+        "column": "is_active",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "boolean",
+        "correct": true
+      },
+      {
+        "column": "churned",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "boolean",
+        "correct": true
+      },
+      {
+        "column": "city",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "geo",
+        "correct": true
+      },
+      {
+        "column": "department",
+        "expected_role": "dimension",
+        "predicted_role": "dimension",
+        "semantic_type": "categorical",
+        "correct": true
+      },
+      {
+        "column": "order_date",
+        "expected_role": "time",
+        "predicted_role": "time",
+        "semantic_type": "datetime",
+        "correct": true
+      },
+      {
+        "column": "signup_ts",
+        "expected_role": "time",
+        "predicted_role": "time",
+        "semantic_type": "datetime",
+        "correct": true
+      },
+      {
+        "column": "year",
+        "expected_role": "time",
+        "predicted_role": "time",
+        "semantic_type": "year",
+        "correct": true
+      },
+      {
+        "column": "feedback",
+        "expected_role": "text",
+        "predicted_role": "text",
+        "semantic_type": "text",
+        "correct": true
+      },
+      {
+        "column": "comments",
+        "expected_role": "text",
+        "predicted_role": "text",
+        "semantic_type": "text",
+        "correct": true
+      }
+    ]
+  },
+  "E3_relationships": {
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1": 0.8571,
+    "tp": 3,
+    "fp": 0,
+    "fn": 1,
+    "seconds": 0.021,
+    "found": [
+      [
+        "orders",
+        "customer_id",
+        "customers",
+        "customer_id"
+      ],
+      [
+        "orders",
+        "product_id",
+        "products",
+        "product_id"
+      ],
+      [
+        "orders",
+        "store_code",
+        "stores",
+        "code"
+      ]
+    ],
+    "missed": [
+      [
+        "orders",
+        "salesperson",
+        "employees",
+        "employee_no"
+      ]
+    ],
+    "note": "salesperson\u2192employee_no is an integer key with dissimilar names (hard case)"
+  },
+  "E4_anomalies": {
+    "setup": "5,000 rows x 5 measures, 2% anomalies (1% extreme magnitude, 1% contextual cost>revenue); mean of 3 seeds",
+    "results": {
+      "relationship_aware_iforest (InsightFlow)": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "flagged_mean": 100.0,
+        "point_recall": 0.5267,
+        "contextual_recall": 0.4733
+      },
+      "isolation_forest": {
+        "precision": 0.3433,
+        "recall": 0.3433,
+        "f1": 0.3433,
+        "flagged_mean": 100.0,
+        "point_recall": 0.6267,
+        "contextual_recall": 0.06
+      },
+      "zscore_3": {
+        "precision": 0.2454,
+        "recall": 0.35,
+        "f1": 0.2877,
+        "flagged_mean": 144.3,
+        "point_recall": 0.5667,
+        "contextual_recall": 0.1333
+      },
+      "iqr_3x": {
+        "precision": 0.3088,
+        "recall": 0.44,
+        "f1": 0.3624,
+        "flagged_mean": 142.7,
+        "point_recall": 0.6467,
+        "contextual_recall": 0.2333
+      }
+    }
+  },
+  "E5_forecasting": {
+    "setup": "40 synthetic monthly series (48 months: trend x seasonality x noise) + demo revenue; train on all but last 6, forecast 6",
+    "mean_mape": {
+      "naive": 19.98,
+      "seasonal_naive": 10.8,
+      "linear_trend": 14.31,
+      "holt_winters_insightflow": 7.66
+    },
+    "median_mape": {
+      "naive": 19.09,
+      "seasonal_naive": 11.18,
+      "linear_trend": 13.69,
+      "holt_winters_insightflow": 7.32
+    },
+    "mean_mase": {
+      "naive": 2.203,
+      "seasonal_naive": 1.122,
+      "linear_trend": 1.555,
+      "holt_winters_insightflow": 0.789
+    },
+    "best_method_count": {
+      "naive": 1,
+      "seasonal_naive": 7,
+      "linear_trend": 2,
+      "holt_winters_insightflow": 31
+    },
+    "demo_revenue_mape": {
+      "naive": 19.23,
+      "seasonal_naive": 14.76,
+      "linear_trend": 14.21,
+      "holt_winters_insightflow": 15.14
+    }
+  },
+  "E6_nlq": {
+    "development_set": {
+      "questions": 32,
+      "exact_match_accuracy": 1.0,
+      "component_accuracy": {
+        "measure": 1.0,
+        "aggregation": 1.0,
+        "grouping": 1.0,
+        "time_grain": 1.0,
+        "filters": 1.0,
+        "series": 1.0
+      },
+      "failures": []
+    },
+    "heldout_set": {
+      "questions": 20,
+      "exact_match_accuracy": 0.8,
+      "component_accuracy": {
+        "measure": 0.9,
+        "aggregation": 0.8,
+        "grouping": 1.0,
+        "time_grain": 1.0,
+        "filters": 1.0,
+        "series": 1.0
+      },
+      "failures": [
+        {
+          "question": "lowest delivery days by sales channel",
+          "correct": false,
+          "failed": [
+            "aggregation"
+          ],
+          "parsed": {
+            "measure": "delivery_days",
+            "agg": "avg",
+            "x": "sales_channel",
+            "grain": null,
+            "series": null,
+            "filters": {}
+          }
+        },
+        {
+          "question": "how many customers per region",
+          "correct": false,
+          "failed": [
+            "measure",
+            "aggregation"
+          ],
+          "parsed": {
+            "measure": "*",
+            "agg": "count",
+            "x": "region",
+            "grain": null,
+            "series": null,
+            "filters": {}
+          }
+        },
+        {
+          "question": "unique products sold",
+          "correct": false,
+          "failed": [
+            "measure",
+            "aggregation"
+          ],
+          "parsed": {
+            "measure": "revenue",
+            "agg": "sum",
+            "x": null,
+            "grain": null,
+            "series": null,
+            "filters": {}
+          }
+        },
+        {
+          "question": "highest unit price",
+          "correct": false,
+          "failed": [
+            "aggregation"
+          ],
+          "parsed": {
+            "measure": "unit_price",
+            "agg": "avg",
+            "x": null,
+            "grain": null,
+            "series": null,
+            "filters": {}
+          }
+        }
+      ]
+    }
+  },
+  "E8_case_study": {
+    "sources": [
+      {
+        "source": "Sales Orders (CSV)",
+        "raw_rows": 6045,
+        "clean_rows": 6000,
+        "columns": 14,
+        "issues_fixed": 641,
+        "quality_before": 99.7,
+        "quality_after": 100.0,
+        "etl_seconds": 0.259,
+        "issues": {
+          "format_fixes": 255,
+          "null_tokens": 64,
+          "inconsistent_values": 147,
+          "duplicates_removed": 45,
+          "imputed_values": 130,
+          "outliers_detected": 735
+        }
+      },
+      {
+        "source": "Product Catalog (Excel)",
+        "raw_rows": 98,
+        "clean_rows": 98,
+        "columns": 7,
+        "issues_fixed": 0,
+        "quality_before": 100.0,
+        "quality_after": 100.0,
+        "etl_seconds": 0.028,
+        "issues": {}
+      },
+      {
+        "source": "Customers (SQL)",
+        "raw_rows": 900,
+        "clean_rows": 900,
+        "columns": 8,
+        "issues_fixed": 0,
+        "quality_before": 100.0,
+        "quality_after": 100.0,
+        "etl_seconds": 0.052,
+        "issues": {}
+      },
+      {
+        "source": "Marketing (REST/JSON)",
+        "raw_rows": 136,
+        "clean_rows": 136,
+        "columns": 7,
+        "issues_fixed": 0,
+        "quality_before": 100.0,
+        "quality_after": 100.0,
+        "etl_seconds": 0.023,
+        "issues": {
+          "outliers_detected": 9
+        }
+      }
+    ],
+    "insights_generated": 20,
+    "insights_by_severity": {
+      "positive": 7,
+      "info": 6,
+      "warning": 5,
+      "negative": 2
+    },
+    "top_insights": [
+      "Revenue is growing",
+      "Sales Channel 'Retail Store' fell 31%",
+      "Seasonal pattern in revenue: peaks in Oct",
+      "Unusual dip in revenue on 2024-07-01",
+      "Sales Channel 'Phone' grew 55%",
+      "Region 'West' fell 29%",
+      "Profit is growing",
+      "Revenue jumped 51.5% in the latest month"
+    ],
+    "trend": {
+      "direction": "upward",
+      "slope_per_period": 1682.1471,
+      "slope_pct_of_mean": 1.577,
+      "r2": 0.4718,
+      "p_value": 7.2538426810734285e-06,
+      "seasonality_peak": "Oct",
+      "forecast_method": "Holt-Winters (additive, damped)",
+      "in_sample_mape": 13.08
+    },
+    "key_drivers": [
+      [
+        "unit_price",
+        65.53
+      ],
+      [
+        "quantity",
+        31.98
+      ],
+      [
+        "discount",
+        1.42
+      ],
+      [
+        "region",
+        0.4
+      ],
+      [
+        "order_date:month",
+        0.28
+      ]
+    ],
+    "drivers_r2": 0.7562,
+    "excluded_components": [
+      {
+        "column": "profit",
+        "r": 0.7131
+      },
+      {
+        "column": "cost",
+        "r": 0.8283
+      }
+    ],
+    "anomalies": {
+      "count": 120,
+      "rate_pct": 2.0
+    },
+    "segments": {
+      "k": 2,
+      "silhouette": 0.3664
+    }
+  },
+  "E7_scalability": [
+    {
+      "rows": 10000,
+      "csv_mb": 0.6,
+      "extract_s": 0.02,
+      "transform_s": 0.28,
+      "profile_s": 0.03,
+      "load_s": 0.01,
+      "etl_total_s": 0.33,
+      "throughput_rows_per_s": 29938,
+      "chart_query_ms": 4.3,
+      "grouped_series_query_ms": 10.6,
+      "correlations_ms": 26.7,
+      "trend_forecast_ms": 9.7,
+      "anomalies_ms": 687.7,
+      "full_insights_s": 1.69
+    },
+    {
+      "rows": 50000,
+      "csv_mb": 3.3,
+      "extract_s": 0.09,
+      "transform_s": 1.25,
+      "profile_s": 0.08,
+      "load_s": 0.04,
+      "etl_total_s": 1.46,
+      "throughput_rows_per_s": 34134,
+      "chart_query_ms": 6.2,
+      "grouped_series_query_ms": 12.3,
+      "correlations_ms": 46.6,
+      "trend_forecast_ms": 11.5,
+      "anomalies_ms": 2003.1,
+      "full_insights_s": 3.88
+    },
+    {
+      "rows": 100000,
+      "csv_mb": 6.6,
+      "extract_s": 0.18,
+      "transform_s": 2.36,
+      "profile_s": 0.13,
+      "load_s": 0.15,
+      "etl_total_s": 2.83,
+      "throughput_rows_per_s": 35350,
+      "chart_query_ms": 7.6,
+      "grouped_series_query_ms": 11.5,
+      "correlations_ms": 61.8,
+      "trend_forecast_ms": 13.5,
+      "anomalies_ms": 1800.2,
+      "full_insights_s": 3.93
+    },
+    {
+      "rows": 250000,
+      "csv_mb": 16.8,
+      "extract_s": 0.42,
+      "transform_s": 5.24,
+      "profile_s": 0.34,
+      "load_s": 0.15,
+      "etl_total_s": 6.15,
+      "throughput_rows_per_s": 40650,
+      "chart_query_ms": 8.5,
+      "grouped_series_query_ms": 12.4,
+      "correlations_ms": 195.7,
+      "trend_forecast_ms": 20.7,
+      "anomalies_ms": 2215.8,
+      "full_insights_s": 4.44
+    },
+    {
+      "rows": 500000,
+      "csv_mb": 33.7,
+      "extract_s": 0.85,
+      "transform_s": 11.44,
+      "profile_s": 0.56,
+      "load_s": 0.31,
+      "etl_total_s": 13.16,
+      "throughput_rows_per_s": 38002,
+      "chart_query_ms": 8.9,
+      "grouped_series_query_ms": 14.1,
+      "correlations_ms": 252.7,
+      "trend_forecast_ms": 21.1,
+      "anomalies_ms": 2042.3,
+      "full_insights_s": 4.34
+    },
+    {
+      "rows": 1000000,
+      "csv_mb": 67.7,
+      "extract_s": 1.83,
+      "transform_s": 22.99,
+      "profile_s": 1.32,
+      "load_s": 0.54,
+      "etl_total_s": 26.67,
+      "throughput_rows_per_s": 37489,
+      "chart_query_ms": 11.8,
+      "grouped_series_query_ms": 15.7,
+      "correlations_ms": 308.9,
+      "trend_forecast_ms": 38.4,
+      "anomalies_ms": 2018.2,
+      "full_insights_s": 4.19
+    }
+  ],
+  "environment": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+    "cpus": 4,
+    "pandas": "3.1.1",
+    "numpy": "2.5.5"
+  }
+}

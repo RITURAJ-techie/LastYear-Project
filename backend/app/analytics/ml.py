@@ -14,7 +14,28 @@ from .. import warehouse as wh
 from .stats import load
 
 
-def anomalies(table: str, profile: dict[str, Any], contamination: float = 0.02, top: int = 25) -> dict[str, Any]:
+def relationship_features(X: pd.DataFrame, threshold: float = 0.7, cap: int = 10) -> tuple[pd.DataFrame, list[str]]:
+    """Add log-ratio features for strongly correlated, strictly positive measure pairs.
+
+    Univariate-looking records can still break a relationship (e.g. cost > revenue). A plain
+    Isolation Forest rarely isolates them; log(a/b) turns the broken relationship into an
+    extreme value on a single axis ("relationship-aware" Isolation Forest)."""
+    pos = [c for c in X.columns if (X[c] > 0).all()]
+    if len(pos) < 2:
+        return X, []
+    corr = X[pos].corr()
+    pairs = sorted(((abs(corr.loc[a, b]), a, b) for i, a in enumerate(pos) for b in pos[i + 1:]
+                    if abs(corr.loc[a, b]) >= threshold), reverse=True)[:cap]
+    out, added = X.copy(), []
+    for _, a, b in pairs:
+        name = f"{a}/{b}"
+        out[name] = np.log(X[a]) - np.log(X[b])
+        added.append(name)
+    return out, added
+
+
+def anomalies(table: str, profile: dict[str, Any], contamination: float = 0.02, top: int = 25,
+              relationship_aware: bool = True) -> dict[str, Any]:
     measures = profile["measures"][:12]
     if not measures:
         return {"available": False, "reason": "No numeric measures to analyse"}
@@ -25,6 +46,9 @@ def anomalies(table: str, profile: dict[str, Any], contamination: float = 0.02, 
     X = X.loc[:, X.std() > 0]
     if X.shape[1] == 0 or len(X) < 20:
         return {"available": False, "reason": "Not enough varied numeric data for anomaly detection"}
+    ratio_cols: list[str] = []
+    if relationship_aware:
+        X, ratio_cols = relationship_features(X)
     scaler = StandardScaler()
     Z = scaler.fit_transform(X)
     model = IsolationForest(n_estimators=200, contamination=contamination, random_state=42)
@@ -37,17 +61,20 @@ def anomalies(table: str, profile: dict[str, Any], contamination: float = 0.02, 
     for idx, r in flagged.iterrows():
         z = zdf.loc[idx]
         drivers = z.abs().sort_values(ascending=False).head(3)
-        reasons = [f"{c} is {'unusually high' if z[c] > 0 else 'unusually low'} ({X.loc[idx, c]:,.2f}, {abs(z[c]):.1f}σ from mean)"
+        reasons = [(f"the {c.replace('/', ' to ')} ratio is {'unusually high' if z[c] > 0 else 'unusually low'} "
+                    f"({np.exp(X.loc[idx, c]):,.2f}x, {abs(z[c]):.1f}σ from normal)") if c in ratio_cols else
+                   f"{c} is {'unusually high' if z[c] > 0 else 'unusually low'} ({X.loc[idx, c]:,.2f}, {abs(z[c]):.1f}σ from mean)"
                    for c in drivers.index if abs(z[c]) >= 1.5]
         rec = wh.to_records(pd.DataFrame([r.drop(["_score", "_anomaly"])]))[0]
         rows.append({"score": round(float(r["_score"]), 4), "record": rec, "reasons": reasons or ["Unusual combination of values"]})
     per_col = []
-    for c in X.columns:
+    for c in [c for c in X.columns if c not in ratio_cols]:
         z = np.abs(zdf[c])
         per_col.append({"column": c, "extreme_values": int((z > 3).sum()), "max_z": round(float(z.max()), 2)})
     per_col.sort(key=lambda d: -d["extreme_values"])
     return {
-        "available": True, "method": "Isolation Forest (multivariate) + z-score attribution",
+        "available": True, "method": "Relationship-aware Isolation Forest + z-score attribution" if ratio_cols else "Isolation Forest (multivariate) + z-score attribution",
+        "relationship_features": ratio_cols,
         "rows_analyzed": int(len(df)), "anomaly_count": int(df["_anomaly"].sum()),
         "anomaly_rate_pct": round(float(df["_anomaly"].mean() * 100), 2),
         "features": list(X.columns), "top": rows, "by_column": per_col,
