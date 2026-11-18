@@ -1,0 +1,1229 @@
+{
+ "source": "Demo Marketing API",
+ "data": [
+  {
+   "month": "2023-01-01",
+   "channel": "Search Ads",
+   "spend": 37667.87,
+   "impressions": 2833170,
+   "clicks": 113186,
+   "leads": 6630,
+   "conversions": 3194
+  },
+  {
+   "month": "2023-01-01",
+   "channel": "Social Media",
+   "spend": 26015.84,
+   "impressions": 1512533,
+   "clicks": 15695,
+   "leads": 1052,
+   "conversions": 270
+  },
+  {
+   "month": "2023-01-01",
+   "channel": "Email",
+   "spend": 7686.77,
+   "impressions": 547138,
+   "clicks": 31427,
+   "leads": 2512,
+   "conversions": 674
+  },
+  {
+   "month": "2023-01-01",
+   "channel": "Affiliates",
+   "spend": 13692.75,
+   "impressions": 829906,
+   "clicks": 17920,
+   "leads": 855,
+   "conversions": 457
+  },
+  {
+   "month": "2023-02-01",
+   "channel": "Search Ads",
+   "spend": 42695.78,
+   "impressions": 3276609,
+   "clicks": 122824,
+   "leads": 8773,
+   "conversions": 2761
+  },
+  {
+   "month": "2023-02-01",
+   "channel": "Social Media",
+   "spend": 32213.6,
+   "impressions": 2224065,
+   "clicks": 26681,
+   "leads": 1859,
+   "conversions": 469
+  },
+  {
+   "month": "2023-02-01",
+   "channel": "Email",
+   "spend": 9164.84,
+   "impressions": 644401,
+   "clicks": 35770,
+   "leads": 2300,
+   "conversions": 1021
+  },
+  {
+   "month": "2023-02-01",
+   "channel": "Affiliates",
+   "spend": 14317.92,
+   "impressions": 1073091,
+   "clicks": 21631,
+   "leads": 1421,
+   "conversions": 551
+  },
+  {
+   "month": "2023-03-01",
+   "channel": "Search Ads",
+   "spend": 46541.3,
+   "impressions": 2735148,
+   "clicks": 108518,
+   "leads": 8993,
+   "conversions": 2440
+  },
+  {
+   "month": "2023-03-01",
+   "channel": "Social Media",
+   "spend": 32631.02,
+   "impressions": 2382050,
+   "clicks": 31599,
+   "leads": 1575,
+   "conversions": 769
+  },
+  {
+   "month": "2023-03-01",
+   "channel": "Email",
+   "spend": 8721.85,
+   "impressions": 505993,
+   "clicks": 28382,
+   "leads": 2136,
+   "conversions": 611
+  },
+  {
+   "month": "2023-03-01",
+   "channel": "Affiliates",
+   "spend": 16303.75,
+   "impressions": 1172961,
+   "clicks": 21099,
+   "leads": 992,
+   "conversions": 599
+  },
+  {
+   "month": "2023-04-01",
+   "channel": "Search Ads",
+   "spend": 40351.16,
+   "impressions": 2979462,
+   "clicks": 106025,
+   "leads": 5682,
+   "conversions": 1360
+  },
+  {
+   "month": "2023-04-01",
+   "channel": "Social Media",
+   "spend": 31311.53,
+   "impressions": 1754159,
+   "clicks": 20710,
+   "leads": 1768,
+   "conversions": 454
+  },
+  {
+   "month": "2023-04-01",
+   "channel": "Email",
+   "spend": 7828.35,
+   "impressions": 611549,
+   "clicks": 33843,
+   "leads": 2079,
+   "conversions": 1010
+  },
+  {
+   "month": "2023-04-01",
+   "channel": "Affiliates",
+   "spend": 14123.38,
+   "impressions": 793324,
+   "clicks": 15086,
+   "leads": 1110,
+   "conversions": 423
+  },
+  {
+   "month": "2023-05-01",
+   "channel": "Search Ads",
+   "spend": 41441.95,
+   "impressions": 2662889,
+   "clicks": 80565,
+   "leads": 3419,
+   "conversions": 2077
+  },
+  {
+   "month": "2023-05-01",
+   "channel": "Social Media",
+   "spend": 31410.1,
+   "impressions": 1925722,
+   "clicks": 22598,
+   "leads": 1488,
+   "conversions": 383
+  },
+  {
+   "month": "2023-05-01",
+   "channel": "Email",
+   "spend": 7401.33,
+   "impressions": 584602,
+   "clicks": 33797,
+   "leads": 2669,
+   "conversions": 754
+  },
+  {
+   "month": "2023-05-01",
+   "channel": "Affiliates",
+   "spend": 15965.68,
+   "impressions": 1028933,
+   "clicks": 21228,
+   "leads": 1698,
+   "conversions": 373
+  },
+  {
+   "month": "2023-06-01",
+   "channel": "Search Ads",
+   "spend": 39220.06,
+   "impressions": 2358307,
+   "clicks": 82346,
+   "leads": 5213,
+   "conversions": 1083
+  },
+  {
+   "month": "2023-06-01",
+   "channel": "Social Media",
+   "spend": 29454.78,
+   "impressions": 1882431,
+   "clicks": 25098,
+   "leads": 2071,
+   "conversions": 572
+  },
+  {
+   "month": "2023-06-01",
+   "channel": "Email",
+   "spend": 8794.71,
+   "impressions": 488199,
+   "clicks": 26182,
+   "leads": 2062,
+   "conversions": 574
+  },
+  {
+   "month": "2023-06-01",
+   "channel": "Affiliates",
+   "spend": 13742.47,
+   "impressions": 883448,
+   "clicks": 17041,
+   "leads": 1406,
+   "conversions": 270
+  },
+  {
+   "month": "2023-07-01",
+   "channel": "Search Ads",
+   "spend": 46079.29,
+   "impressions": 2957728,
+   "clicks": 112253,
+   "leads": 5521,
+   "conversions": 1364
+  },
+  {
+   "month": "2023-07-01",
+   "channel": "Social Media",
+   "spend": 31413.68,
+   "impressions": 1844532,
+   "clicks": 22284,
+   "leads": 1499,
+   "conversions": 503
+  },
+  {
+   "month": "2023-07-01",
+   "channel": "Email",
+   "spend": 8107.03,
+   "impressions": 581175,
+   "clicks": 29984,
+   "leads": 1583,
+   "conversions": 766
+  },
+  {
+   "month": "2023-07-01",
+   "channel": "Affiliates",
+   "spend": 13607.09,
+   "impressions": 969813,
+   "clicks": 16994,
+   "leads": 1507,
+   "conversions": 323
+  },
+  {
+   "month": "2023-08-01",
+   "channel": "Search Ads",
+   "spend": 36098.33,
+   "impressions": 2419049,
+   "clicks": 83620,
+   "leads": 4180,
+   "conversions": 1250
+  },
+  {
+   "month": "2023-08-01",
+   "channel": "Social Media",
+   "spend": 33888.16,
+   "impressions": 2116775,
+   "clicks": 22378,
+   "leads": 1809,
+   "conversions": 450
+  },
+  {
+   "month": "2023-08-01",
+   "channel": "Email",
+   "spend": 8495.99,
+   "impressions": 527876,
+   "clicks": 29711,
+   "leads": 1592,
+   "conversions": 722
+  },
+  {
+   "month": "2023-08-01",
+   "channel": "Affiliates",
+   "spend": 14139.78,
+   "impressions": 1048319,
+   "clicks": 20768,
+   "leads": 1042,
+   "conversions": 556
+  },
+  {
+   "month": "2023-09-01",
+   "channel": "Search Ads",
+   "spend": 36221.89,
+   "impressions": 2401180,
+   "clicks": 91843,
+   "leads": 7988,
+   "conversions": 2718
+  },
+  {
+   "month": "2023-09-01",
+   "channel": "Social Media",
+   "spend": 34140.93,
+   "impressions": 2299446,
+   "clicks": 25335,
+   "leads": 2135,
+   "conversions": 733
+  },
+  {
+   "month": "2023-09-01",
+   "channel": "Email",
+   "spend": 7352.92,
+   "impressions": 478713,
+   "clicks": 25914,
+   "leads": 1469,
+   "conversions": 462
+  },
+  {
+   "month": "2023-09-01",
+   "channel": "Affiliates",
+   "spend": 13507.32,
+   "impressions": 941195,
+   "clicks": 17090,
+   "leads": 1246,
+   "conversions": 489
+  },
+  {
+   "month": "2023-10-01",
+   "channel": "Search Ads",
+   "spend": 60876.92,
+   "impressions": 4686933,
+   "clicks": 187753,
+   "leads": 8031,
+   "conversions": 3367
+  },
+  {
+   "month": "2023-10-01",
+   "channel": "Social Media",
+   "spend": 37745.27,
+   "impressions": 2543614,
+   "clicks": 31380,
+   "leads": 1542,
+   "conversions": 417
+  },
+  {
+   "month": "2023-10-01",
+   "channel": "Email",
+   "spend": 11124.2,
+   "impressions": 803252,
+   "clicks": 45606,
+   "leads": 3075,
+   "conversions": 1132
+  },
+  {
+   "month": "2023-10-01",
+   "channel": "Affiliates",
+   "spend": 19618.24,
+   "impressions": 1141033,
+   "clicks": 22965,
+   "leads": 2064,
+   "conversions": 564
+  },
+  {
+   "month": "2023-11-01",
+   "channel": "Search Ads",
+   "spend": 61892.3,
+   "impressions": 3886219,
+   "clicks": 147054,
+   "leads": 6809,
+   "conversions": 2734
+  },
+  {
+   "month": "2023-11-01",
+   "channel": "Social Media",
+   "spend": 41281.29,
+   "impressions": 2556620,
+   "clicks": 28667,
+   "leads": 2523,
+   "conversions": 485
+  },
+  {
+   "month": "2023-11-01",
+   "channel": "Email",
+   "spend": 9538.37,
+   "impressions": 721133,
+   "clicks": 44957,
+   "leads": 3605,
+   "conversions": 979
+  },
+  {
+   "month": "2023-11-01",
+   "channel": "Affiliates",
+   "spend": 18371.2,
+   "impressions": 1352414,
+   "clicks": 26917,
+   "leads": 2407,
+   "conversions": 467
+  },
+  {
+   "month": "2023-12-01",
+   "channel": "Search Ads",
+   "spend": 63026.3,
+   "impressions": 3900143,
+   "clicks": 125330,
+   "leads": 7329,
+   "conversions": 3615
+  },
+  {
+   "month": "2023-12-01",
+   "channel": "Social Media",
+   "spend": 43740.37,
+   "impressions": 3329678,
+   "clicks": 39056,
+   "leads": 3017,
+   "conversions": 900
+  },
+  {
+   "month": "2023-12-01",
+   "channel": "Email",
+   "spend": 9977.91,
+   "impressions": 571720,
+   "clicks": 31185,
+   "leads": 2368,
+   "conversions": 744
+  },
+  {
+   "month": "2023-12-01",
+   "channel": "Affiliates",
+   "spend": 18682.4,
+   "impressions": 1297959,
+   "clicks": 28525,
+   "leads": 1733,
+   "conversions": 626
+  },
+  {
+   "month": "2024-01-01",
+   "channel": "Search Ads",
+   "spend": 48213.13,
+   "impressions": 3796739,
+   "clicks": 115041,
+   "leads": 8906,
+   "conversions": 1856
+  },
+  {
+   "month": "2024-01-01",
+   "channel": "Social Media",
+   "spend": 37201.12,
+   "impressions": 2118122,
+   "clicks": 24377,
+   "leads": 1237,
+   "conversions": 298
+  },
+  {
+   "month": "2024-01-01",
+   "channel": "Email",
+   "spend": 9639.31,
+   "impressions": 639922,
+   "clicks": 41620,
+   "leads": 2778,
+   "conversions": 812
+  },
+  {
+   "month": "2024-01-01",
+   "channel": "Affiliates",
+   "spend": 18969.49,
+   "impressions": 1080374,
+   "clicks": 20005,
+   "leads": 1324,
+   "conversions": 379
+  },
+  {
+   "month": "2024-02-01",
+   "channel": "Search Ads",
+   "spend": 41906.24,
+   "impressions": 2804741,
+   "clicks": 86240,
+   "leads": 6517,
+   "conversions": 1379
+  },
+  {
+   "month": "2024-02-01",
+   "channel": "Social Media",
+   "spend": 38436.32,
+   "impressions": 2872638,
+   "clicks": 37979,
+   "leads": 1918,
+   "conversions": 1052
+  },
+  {
+   "month": "2024-02-01",
+   "channel": "Email",
+   "spend": 9309.86,
+   "impressions": 708261,
+   "clicks": 44296,
+   "leads": 2684,
+   "conversions": 714
+  },
+  {
+   "month": "2024-02-01",
+   "channel": "Affiliates",
+   "spend": 15043.75,
+   "impressions": 1075127,
+   "clicks": 21751,
+   "leads": 1856,
+   "conversions": 609
+  },
+  {
+   "month": "2024-03-01",
+   "channel": "Search Ads",
+   "spend": 48000.16,
+   "impressions": 3052727,
+   "clicks": 114350,
+   "leads": 7731,
+   "conversions": 3391
+  },
+  {
+   "month": "2024-03-01",
+   "channel": "Social Media",
+   "spend": 31555.41,
+   "impressions": 2260874,
+   "clicks": 24334,
+   "leads": 1826,
+   "conversions": 484
+  },
+  {
+   "month": "2024-03-01",
+   "channel": "Email",
+   "spend": 10203.88,
+   "impressions": 648106,
+   "clicks": 41646,
+   "leads": 2826,
+   "conversions": 732
+  },
+  {
+   "month": "2024-03-01",
+   "channel": "Affiliates",
+   "spend": 14541.12,
+   "impressions": 904311,
+   "clicks": 18624,
+   "leads": 1510,
+   "conversions": 529
+  },
+  {
+   "month": "2024-04-01",
+   "channel": "Search Ads",
+   "spend": 50118.13,
+   "impressions": 3210112,
+   "clicks": 119896,
+   "leads": 6675,
+   "conversions": 2866
+  },
+  {
+   "month": "2024-04-01",
+   "channel": "Social Media",
+   "spend": 35419.93,
+   "impressions": 2632236,
+   "clicks": 31969,
+   "leads": 1800,
+   "conversions": 697
+  },
+  {
+   "month": "2024-04-01",
+   "channel": "Email",
+   "spend": 9085.23,
+   "impressions": 726506,
+   "clicks": 40121,
+   "leads": 1922,
+   "conversions": 751
+  },
+  {
+   "month": "2024-04-01",
+   "channel": "Affiliates",
+   "spend": 18523.94,
+   "impressions": 1037199,
+   "clicks": 20786,
+   "leads": 912,
+   "conversions": 461
+  },
+  {
+   "month": "2024-05-01",
+   "channel": "Search Ads",
+   "spend": 47185.53,
+   "impressions": 2970397,
+   "clicks": 115915,
+   "leads": 6309,
+   "conversions": 1860
+  },
+  {
+   "month": "2024-05-01",
+   "channel": "Social Media",
+   "spend": 38482.08,
+   "impressions": 2363279,
+   "clicks": 24406,
+   "leads": 1559,
+   "conversions": 496
+  },
+  {
+   "month": "2024-05-01",
+   "channel": "Email",
+   "spend": 9338.2,
+   "impressions": 515956,
+   "clicks": 30902,
+   "leads": 1281,
+   "conversions": 910
+  },
+  {
+   "month": "2024-05-01",
+   "channel": "Affiliates",
+   "spend": 14621.09,
+   "impressions": 835091,
+   "clicks": 15727,
+   "leads": 1369,
+   "conversions": 299
+  },
+  {
+   "month": "2024-06-01",
+   "channel": "Search Ads",
+   "spend": 52971.74,
+   "impressions": 3800860,
+   "clicks": 127355,
+   "leads": 5668,
+   "conversions": 2512
+  },
+  {
+   "month": "2024-06-01",
+   "channel": "Social Media",
+   "spend": 33980.52,
+   "impressions": 2271468,
+   "clicks": 27300,
+   "leads": 1100,
+   "conversions": 680
+  },
+  {
+   "month": "2024-06-01",
+   "channel": "Email",
+   "spend": 8986.58,
+   "impressions": 673078,
+   "clicks": 44026,
+   "leads": 1778,
+   "conversions": 790
+  },
+  {
+   "month": "2024-06-01",
+   "channel": "Affiliates",
+   "spend": 18655.97,
+   "impressions": 1111856,
+   "clicks": 20734,
+   "leads": 1855,
+   "conversions": 279
+  },
+  {
+   "month": "2024-07-01",
+   "channel": "Search Ads",
+   "spend": 49341.26,
+   "impressions": 3639091,
+   "clicks": 114472,
+   "leads": 9846,
+   "conversions": 2715
+  },
+  {
+   "month": "2024-07-01",
+   "channel": "Social Media",
+   "spend": 36219.27,
+   "impressions": 2422651,
+   "clicks": 28606,
+   "leads": 1679,
+   "conversions": 515
+  },
+  {
+   "month": "2024-07-01",
+   "channel": "Email",
+   "spend": 9252.2,
+   "impressions": 701374,
+   "clicks": 40447,
+   "leads": 3308,
+   "conversions": 766
+  },
+  {
+   "month": "2024-07-01",
+   "channel": "Affiliates",
+   "spend": 14665.86,
+   "impressions": 966146,
+   "clicks": 20130,
+   "leads": 1553,
+   "conversions": 491
+  },
+  {
+   "month": "2024-08-01",
+   "channel": "Search Ads",
+   "spend": 43916.93,
+   "impressions": 2432677,
+   "clicks": 74350,
+   "leads": 6287,
+   "conversions": 914
+  },
+  {
+   "month": "2024-08-01",
+   "channel": "Social Media",
+   "spend": 37104.0,
+   "impressions": 2488070,
+   "clicks": 33580,
+   "leads": 2813,
+   "conversions": 696
+  },
+  {
+   "month": "2024-08-01",
+   "channel": "Email",
+   "spend": 8471.67,
+   "impressions": 506017,
+   "clicks": 32344,
+   "leads": 2838,
+   "conversions": 710
+  },
+  {
+   "month": "2024-08-01",
+   "channel": "Affiliates",
+   "spend": 15570.13,
+   "impressions": 1159646,
+   "clicks": 20885,
+   "leads": 945,
+   "conversions": 378
+  },
+  {
+   "month": "2024-09-01",
+   "channel": "Search Ads",
+   "spend": 49209.42,
+   "impressions": 3516412,
+   "clicks": 139818,
+   "leads": 8216,
+   "conversions": 1888
+  },
+  {
+   "month": "2024-09-01",
+   "channel": "Social Media",
+   "spend": 30699.07,
+   "impressions": 1876082,
+   "clicks": 20912,
+   "leads": 1800,
+   "conversions": 450
+  },
+  {
+   "month": "2024-09-01",
+   "channel": "Email",
+   "spend": 10222.29,
+   "impressions": 801251,
+   "clicks": 54649,
+   "leads": 4643,
+   "conversions": 888
+  },
+  {
+   "month": "2024-09-01",
+   "channel": "Affiliates",
+   "spend": 16765.29,
+   "impressions": 1186294,
+   "clicks": 20610,
+   "leads": 1334,
+   "conversions": 423
+  },
+  {
+   "month": "2024-10-01",
+   "channel": "Search Ads",
+   "spend": 68950.09,
+   "impressions": 4192744,
+   "clicks": 130015,
+   "leads": 7636,
+   "conversions": 1881
+  },
+  {
+   "month": "2024-10-01",
+   "channel": "Social Media",
+   "spend": 43712.81,
+   "impressions": 3169456,
+   "clicks": 35148,
+   "leads": 2719,
+   "conversions": 586
+  },
+  {
+   "month": "2024-10-01",
+   "channel": "Email",
+   "spend": 12722.06,
+   "impressions": 955638,
+   "clicks": 52622,
+   "leads": 2277,
+   "conversions": 736
+  },
+  {
+   "month": "2024-10-01",
+   "channel": "Affiliates",
+   "spend": 21634.54,
+   "impressions": 1723692,
+   "clicks": 31651,
+   "leads": 2398,
+   "conversions": 830
+  },
+  {
+   "month": "2024-11-01",
+   "channel": "Search Ads",
+   "spend": 72734.9,
+   "impressions": 4513251,
+   "clicks": 144881,
+   "leads": 8923,
+   "conversions": 3473
+  },
+  {
+   "month": "2024-11-01",
+   "channel": "Social Media",
+   "spend": 39302.41,
+   "impressions": 2625377,
+   "clicks": 28587,
+   "leads": 2415,
+   "conversions": 707
+  },
+  {
+   "month": "2024-11-01",
+   "channel": "Email",
+   "spend": 13752.89,
+   "impressions": 965590,
+   "clicks": 65603,
+   "leads": 5361,
+   "conversions": 877
+  },
+  {
+   "month": "2024-11-01",
+   "channel": "Affiliates",
+   "spend": 20229.12,
+   "impressions": 1593388,
+   "clicks": 36377,
+   "leads": 2919,
+   "conversions": 1028
+  },
+  {
+   "month": "2024-12-01",
+   "channel": "Search Ads",
+   "spend": 63153.56,
+   "impressions": 4104393,
+   "clicks": 141222,
+   "leads": 11473,
+   "conversions": 4029
+  },
+  {
+   "month": "2024-12-01",
+   "channel": "Social Media",
+   "spend": 44944.21,
+   "impressions": 3444484,
+   "clicks": 41427,
+   "leads": 1896,
+   "conversions": 928
+  },
+  {
+   "month": "2024-12-01",
+   "channel": "Email",
+   "spend": 13474.76,
+   "impressions": 951479,
+   "clicks": 64563,
+   "leads": 3807,
+   "conversions": 1358
+  },
+  {
+   "month": "2024-12-01",
+   "channel": "Affiliates",
+   "spend": 22837.34,
+   "impressions": 1425725,
+   "clicks": 29266,
+   "leads": 1922,
+   "conversions": 818
+  },
+  {
+   "month": "2025-01-01",
+   "channel": "Search Ads",
+   "spend": 44893.5,
+   "impressions": 3115284,
+   "clicks": 101456,
+   "leads": 4086,
+   "conversions": 1762
+  },
+  {
+   "month": "2025-01-01",
+   "channel": "Social Media",
+   "spend": 32451.58,
+   "impressions": 2045029,
+   "clicks": 23833,
+   "leads": 1963,
+   "conversions": 699
+  },
+  {
+   "month": "2025-01-01",
+   "channel": "Email",
+   "spend": 9267.25,
+   "impressions": 625430,
+   "clicks": 42379,
+   "leads": 2265,
+   "conversions": 672
+  },
+  {
+   "month": "2025-01-01",
+   "channel": "Affiliates",
+   "spend": 20663.9,
+   "impressions": 1157502,
+   "clicks": 26202,
+   "leads": 1470,
+   "conversions": 463
+  },
+  {
+   "month": "2025-02-01",
+   "channel": "Search Ads",
+   "spend": 58113.58,
+   "impressions": 4408161,
+   "clicks": 141731,
+   "leads": 11319,
+   "conversions": 3282
+  },
+  {
+   "month": "2025-02-01",
+   "channel": "Social Media",
+   "spend": 38244.94,
+   "impressions": 2116895,
+   "clicks": 21977,
+   "leads": 1301,
+   "conversions": 310
+  },
+  {
+   "month": "2025-02-01",
+   "channel": "Email",
+   "spend": 10234.59,
+   "impressions": 602031,
+   "clicks": 37962,
+   "leads": 2798,
+   "conversions": 976
+  },
+  {
+   "month": "2025-02-01",
+   "channel": "Affiliates",
+   "spend": 17521.8,
+   "impressions": 1261487,
+   "clicks": 23594,
+   "leads": 1978,
+   "conversions": 544
+  },
+  {
+   "month": "2025-03-01",
+   "channel": "Search Ads",
+   "spend": 58215.09,
+   "impressions": 4107226,
+   "clicks": 154216,
+   "leads": 11304,
+   "conversions": 1953
+  },
+  {
+   "month": "2025-03-01",
+   "channel": "Social Media",
+   "spend": 39217.5,
+   "impressions": 2584941,
+   "clicks": 34470,
+   "leads": 3092,
+   "conversions": 837
+  },
+  {
+   "month": "2025-03-01",
+   "channel": "Email",
+   "spend": 10101.54,
+   "impressions": 728296,
+   "clicks": 48677,
+   "leads": 2127,
+   "conversions": 1070
+  },
+  {
+   "month": "2025-03-01",
+   "channel": "Affiliates",
+   "spend": 18075.64,
+   "impressions": 1213231,
+   "clicks": 26845,
+   "leads": 1082,
+   "conversions": 548
+  },
+  {
+   "month": "2025-04-01",
+   "channel": "Search Ads",
+   "spend": 58545.99,
+   "impressions": 3496947,
+   "clicks": 104233,
+   "leads": 7217,
+   "conversions": 1283
+  },
+  {
+   "month": "2025-04-01",
+   "channel": "Social Media",
+   "spend": 33495.75,
+   "impressions": 2596351,
+   "clicks": 35766,
+   "leads": 2116,
+   "conversions": 714
+  },
+  {
+   "month": "2025-04-01",
+   "channel": "Email",
+   "spend": 8515.29,
+   "impressions": 620187,
+   "clicks": 37744,
+   "leads": 1590,
+   "conversions": 938
+  },
+  {
+   "month": "2025-04-01",
+   "channel": "Affiliates",
+   "spend": 20208.07,
+   "impressions": 1404189,
+   "clicks": 23947,
+   "leads": 1041,
+   "conversions": 650
+  },
+  {
+   "month": "2025-05-01",
+   "channel": "Search Ads",
+   "spend": 57713.75,
+   "impressions": 4577129,
+   "clicks": 142669,
+   "leads": 12393,
+   "conversions": 1836
+  },
+  {
+   "month": "2025-05-01",
+   "channel": "Social Media",
+   "spend": 37195.71,
+   "impressions": 2446006,
+   "clicks": 33730,
+   "leads": 1427,
+   "conversions": 715
+  },
+  {
+   "month": "2025-05-01",
+   "channel": "Email",
+   "spend": 9427.0,
+   "impressions": 736889,
+   "clicks": 44210,
+   "leads": 3655,
+   "conversions": 831
+  },
+  {
+   "month": "2025-05-01",
+   "channel": "Affiliates",
+   "spend": 19996.64,
+   "impressions": 1499264,
+   "clicks": 28414,
+   "leads": 1293,
+   "conversions": 802
+  },
+  {
+   "month": "2025-06-01",
+   "channel": "Search Ads",
+   "spend": 54633.93,
+   "impressions": 3684767,
+   "clicks": 130129,
+   "leads": 11643,
+   "conversions": 2988
+  },
+  {
+   "month": "2025-06-01",
+   "channel": "Social Media",
+   "spend": 42653.49,
+   "impressions": 3310983,
+   "clicks": 34812,
+   "leads": 2547,
+   "conversions": 717
+  },
+  {
+   "month": "2025-06-01",
+   "channel": "Email",
+   "spend": 11332.55,
+   "impressions": 679585,
+   "clicks": 43368,
+   "leads": 2893,
+   "conversions": 750
+  },
+  {
+   "month": "2025-06-01",
+   "channel": "Affiliates",
+   "spend": 20360.8,
+   "impressions": 1599683,
+   "clicks": 29408,
+   "leads": 1730,
+   "conversions": 842
+  },
+  {
+   "month": "2025-07-01",
+   "channel": "Search Ads",
+   "spend": 57938.61,
+   "impressions": 3197783,
+   "clicks": 112915,
+   "leads": 6827,
+   "conversions": 2815
+  },
+  {
+   "month": "2025-07-01",
+   "channel": "Social Media",
+   "spend": 40761.79,
+   "impressions": 2730563,
+   "clicks": 36296,
+   "leads": 2446,
+   "conversions": 723
+  },
+  {
+   "month": "2025-07-01",
+   "channel": "Email",
+   "spend": 8732.86,
+   "impressions": 487989,
+   "clicks": 30591,
+   "leads": 1553,
+   "conversions": 406
+  },
+  {
+   "month": "2025-07-01",
+   "channel": "Affiliates",
+   "spend": 18506.69,
+   "impressions": 1280139,
+   "clicks": 26971,
+   "leads": 1213,
+   "conversions": 424
+  },
+  {
+   "month": "2025-08-01",
+   "channel": "Search Ads",
+   "spend": 54553.82,
+   "impressions": 3642582,
+   "clicks": 113966,
+   "leads": 5719,
+   "conversions": 2776
+  },
+  {
+   "month": "2025-08-01",
+   "channel": "Social Media",
+   "spend": 41998.13,
+   "impressions": 2679978,
+   "clicks": 35564,
+   "leads": 3100,
+   "conversions": 984
+  },
+  {
+   "month": "2025-08-01",
+   "channel": "Email",
+   "spend": 9917.99,
+   "impressions": 631024,
+   "clicks": 33283,
+   "leads": 2131,
+   "conversions": 529
+  },
+  {
+   "month": "2025-08-01",
+   "channel": "Affiliates",
+   "spend": 20566.72,
+   "impressions": 1599878,
+   "clicks": 32664,
+   "leads": 1320,
+   "conversions": 806
+  },
+  {
+   "month": "2025-09-01",
+   "channel": "Search Ads",
+   "spend": 54945.84,
+   "impressions": 4241679,
+   "clicks": 153715,
+   "leads": 6329,
+   "conversions": 2031
+  },
+  {
+   "month": "2025-09-01",
+   "channel": "Social Media",
+   "spend": 38568.85,
+   "impressions": 2194116,
+   "clicks": 25178,
+   "leads": 2066,
+   "conversions": 411
+  },
+  {
+   "month": "2025-09-01",
+   "channel": "Email",
+   "spend": 10662.64,
+   "impressions": 675803,
+   "clicks": 42989,
+   "leads": 2981,
+   "conversions": 783
+  },
+  {
+   "month": "2025-09-01",
+   "channel": "Affiliates",
+   "spend": 20715.8,
+   "impressions": 1382634,
+   "clicks": 26167,
+   "leads": 1823,
+   "conversions": 398
+  },
+  {
+   "month": "2025-10-01",
+   "channel": "Search Ads",
+   "spend": 78327.81,
+   "impressions": 4708750,
+   "clicks": 161733,
+   "leads": 8098,
+   "conversions": 2255
+  },
+  {
+   "month": "2025-10-01",
+   "channel": "Social Media",
+   "spend": 52014.46,
+   "impressions": 3707148,
+   "clicks": 48869,
+   "leads": 3601,
+   "conversions": 1004
+  },
+  {
+   "month": "2025-10-01",
+   "channel": "Email",
+   "spend": 12191.41,
+   "impressions": 915686,
+   "clicks": 47779,
+   "leads": 4161,
+   "conversions": 787
+  },
+  {
+   "month": "2025-10-01",
+   "channel": "Affiliates",
+   "spend": 28492.5,
+   "impressions": 2272343,
+   "clicks": 43629,
+   "leads": 3882,
+   "conversions": 1121
+  }
+ ]
+}
