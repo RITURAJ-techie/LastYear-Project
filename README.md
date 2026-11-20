@@ -223,6 +223,35 @@ python scripts/evaluate.py
 ```
 Material for the research paper and project report is in [docs/RESEARCH_AND_REPORT_CONTEXT.md](docs/RESEARCH_AND_REPORT_CONTEXT.md).
 
+## Inspecting the databases from a terminal
+
+| File | Engine | Contents |
+|---|---|---|
+| `metadata.db` | SQLite | `users`, `datasets` (catalog, profile, quality), `etl_runs`, `dashboards` |
+| `warehouse.duckdb` | DuckDB | `stg_*` raw staging, `dw_*` cleaned core tables, `mart_*` views, `dim_date` |
+
+Both live in the data directory: `/data` in Docker (volume `insightflow-data`) or `backend/data/` for a local run. `scripts/dbshell.py` opens either database **read-only** (`.tables`, `.schema <t>`, `.count`, SQL ending in `;`).
+
+**Docker:**
+```bash
+# SQLite metadata – works while the app is running
+docker compose exec insightflow python scripts/dbshell.py sqlite
+
+# DuckDB warehouse – the running app holds DuckDB's write lock, so stop it first
+docker compose stop
+docker compose run --rm insightflow python scripts/dbshell.py duckdb
+docker compose start
+```
+
+**Local run:**
+```bash
+cd backend
+python scripts/dbshell.py sqlite
+python scripts/dbshell.py duckdb -c "SELECT * FROM dw_sales_orders LIMIT 5"
+```
+
+While the app is running, you can query the warehouse in the browser instead: **Data Warehouse → SQL console**.
+
 ## Configuration
 
 Copy `.env.example` to `.env`. Every setting is optional:
