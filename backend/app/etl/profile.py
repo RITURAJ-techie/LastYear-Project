@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 ID_NAME = re.compile(r"(^id$|_id$|^id_|uuid|guid|_key$|^key$|_code$|^code$|_no$|_number$|^sku$|^zip|postal|phone)", re.I)
-MEAN_NAME = re.compile(r"(rate|ratio|percent|pct|price|score|rating|age|avg|mean|margin|days|duration|temp|latitude|longitude|lat$|lon$|lng$|discount|satisfaction|nps|tenure|salary|per_)", re.I)
+MEAN_NAME = re.compile(r"(rate|ratio|percent|pct|price|score|rating|age|avg|mean|margin|days|duration|temp|latitude|longitude|lat$|lon$|lng$|discount|satisfaction|nps|tenure|salary|per_|weight|length|lenght|height|width|depth|volume|size|_cm$|_kg$|_g$|_mm$)", re.I)
 CURRENCY_NAME = re.compile(r"(revenue|sales|amount|price|cost|profit|income|spend|budget|salary|value|fee|payment|total|gmv|usd|inr|eur)", re.I)
 GEO_NAME = re.compile(r"(country|state|city|region|province|territory|continent|location|district|zone|area)", re.I)
 TIME_NAME = re.compile(r"(date|time|month|day|period|timestamp|created|updated|_at$|_on$)", re.I)

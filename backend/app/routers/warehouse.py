@@ -73,7 +73,7 @@ class JoinSpec(BaseModel):
 class JoinIn(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     base_dataset_id: int
-    joins: list[JoinSpec] = Field(min_length=1, max_length=6)
+    joins: list[JoinSpec] = Field(min_length=1, max_length=10)
     description: str = ""
 
 
@@ -94,7 +94,12 @@ def join(body: JoinIn, user: User = Depends(get_current_user), db: Session = Dep
         if j.right_column not in o_cols:
             raise HTTPException(400, f"Column '{j.right_column}' not in {other.name}")
         alias = f"t{i}"
-        joins_sql.append(f"{'LEFT' if j.how == 'left' else 'INNER'} JOIN {other.table_name} {alias} "
+        # one row per key on the lookup side, so a slightly non-unique key (e.g. an order with two
+        # reviews) can never duplicate base rows and inflate totals
+        rk = wh.qi(j.right_column)
+        lookup = (f"(SELECT * FROM {other.table_name} WHERE {rk} IS NOT NULL "
+                  f"QUALIFY row_number() OVER (PARTITION BY CAST({rk} AS VARCHAR)) = 1)")
+        joins_sql.append(f"{'LEFT' if j.how == 'left' else 'INNER'} JOIN {lookup} {alias} "
                          f"ON CAST({available[j.left_column]}.{wh.qi(j.left_column)} AS VARCHAR) = CAST({alias}.{wh.qi(j.right_column)} AS VARCHAR)")
         prefix = other.table_name[3:]
         for c in o_cols:

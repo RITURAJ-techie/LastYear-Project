@@ -149,23 +149,49 @@ async def upload_batch(files: list[UploadFile] = File(...), options: str | None 
 
 def build_integrated(db: Session, user: User, datasets: list[Dataset], rels: list[dict[str, Any]],
                      name: str | None = None) -> dict[str, Any] | None:
-    """Join the 'fact' dataset (most outgoing many-to-one links) with every dataset it references."""
+    """Join the 'fact' dataset (most outgoing many-to-one links) with everything reachable from it.
+
+    Links are followed breadth-first across hops, e.g. order_items -> orders -> customers and
+    order_items -> products -> category translation. Column names are tracked exactly as the
+    warehouse join renames them, so a later hop can start from a column brought in earlier."""
     from .warehouse import JoinIn, JoinSpec, join
 
     m2o = [r for r in rels if r["cardinality"] == "many-to-one"]
     if not m2o:
         return None
     by_id = {d.id: d for d in datasets}
+    cols = {d.id: [c["name"] for c in (d.profile or {}).get("columns", [])] for d in datasets}
     outgoing: dict[int, set[int]] = {}
     for r in m2o:
         outgoing.setdefault(r["from_dataset_id"], set()).add(r["to_dataset_id"])
     base_id = max(outgoing, key=lambda i: (len(outgoing[i]), by_id[i].row_count))
-    joins, used = [], set()
-    for r in sorted((r for r in m2o if r["from_dataset_id"] == base_id), key=lambda r: -r["confidence"]):
-        if r["to_dataset_id"] in used:
-            continue
-        used.add(r["to_dataset_id"])
-        joins.append(JoinSpec(dataset_id=r["to_dataset_id"], left_column=r["from_column"], right_column=r["to_column"], how="left"))
+
+    used = set(cols[base_id])
+    out_name = {(base_id, c): c for c in cols[base_id]}   # (dataset, column) -> column name in the result
+    joined, joins = {base_id}, []
+    progress = True
+    while progress and len(joins) < 10:
+        progress = False
+        for r in sorted(m2o, key=lambda r: -r["confidence"]):
+            src, dst = r["from_dataset_id"], r["to_dataset_id"]
+            if src not in joined or dst in joined or (src, r["from_column"]) not in out_name:
+                continue
+            left = out_name[(src, r["from_column"])]
+            joins.append(JoinSpec(dataset_id=dst, left_column=left, right_column=r["to_column"], how="left"))
+            joined.add(dst)
+            out_name[(dst, r["to_column"])] = left  # the key itself is not repeated; it equals the left column
+            prefix = by_id[dst].table_name[3:]
+            for c in cols[dst]:
+                if c == r["to_column"]:
+                    continue
+                n = c if c not in used else f"{prefix}_{c}"
+                used.add(n)
+                out_name[(dst, c)] = n
+            progress = True
+            if len(joins) >= 10:
+                break
+    if not joins:
+        return None
     title = name or ("Integrated: " + " + ".join([by_id[base_id].name] + [by_id[j.dataset_id].name for j in joins]))[:190]
     return join(JoinIn(name=title, base_dataset_id=base_id, joins=joins,
                        description="Automatically integrated from a batch upload using discovered relationships"), user=user, db=db)
