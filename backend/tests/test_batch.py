@@ -51,3 +51,46 @@ def test_batch_without_integration_and_limits(client, auth):
     too_many = [("files", (f"f{i}.csv", b"a,b\n1,2\n", "text/csv")) for i in range(21)]
     assert client.post("/api/datasets/upload-batch", headers=auth, files=too_many).status_code == 400
     assert client.get("/api/insights/combined?ids=abc", headers=auth).status_code == 400
+
+
+def test_combined_dashboard(client, auth):
+    body = client.post("/api/datasets/upload-batch", headers=auth, files=_files()[:3], data={"auto_integrate": "true"}).json()
+    did = body["combined_dashboard_id"]
+    assert did
+    d = client.get(f"/api/dashboards/{did}", headers=auth).json()
+    assert d["combined"] and len(d["dataset_ids"]) == 4  # 3 files + integrated dataset
+    sections = [w for w in d["widgets"] if w["type"] == "section"]
+    assert len(sections) == 4 and d["widgets"][0]["type"] == "section"
+    assert all(w.get("dataset_id") in d["dataset_ids"] for w in d["widgets"])
+    # every widget resolves against its own dataset; a shared date filter + a column only some datasets have
+    filters = [{"column": "__time__", "op": "between", "value": ["2023-03-01", "2023-12-31"]},
+               {"column": "segment", "op": "in", "value": ["Retail"]}]
+    ignored_somewhere = False
+    for w in d["widgets"]:
+        if w["type"] == "section":
+            continue
+        r = client.post(f"/api/datasets/{w['dataset_id']}/widget-data", headers=auth, json={"widget": w, "filters": filters})
+        assert r.status_code == 200, (w["type"], w["title"], r.text)
+        ignored_somewhere |= "segment" in r.json().get("filters_ignored", [])
+    assert ignored_somewhere  # e.g. the products charts have no 'segment' column
+
+    # build one on demand (e.g. from the Insights Hub) and regenerate it
+    ids = body["insight_dataset_ids"]
+    c = client.post("/api/dashboards/combined", headers=auth, json={"dataset_ids": ids[:2]}).json()
+    assert c["combined"] and set(c["dataset_ids"]) == set(ids[:2])
+    assert client.post(f"/api/dashboards/{c['id']}/regenerate", headers=auth).json()["combined"]
+
+    # deleting a dataset removes its widgets from combined dashboards
+    victim = ids[1]
+    client.delete(f"/api/datasets/{victim}", headers=auth)
+    d2 = client.get(f"/api/dashboards/{did}", headers=auth).json()
+    assert victim not in d2["dataset_ids"]
+
+    # cannot point a widget at another user's dataset
+    other = client.post("/api/auth/register", json={"name": "X", "email": "x2@example.com", "password": "secret123"}).json()
+    oh = {"Authorization": f"Bearer {other['token']}"}
+    own = client.post("/api/datasets/upload-batch", headers=oh, files=_files()[:2]).json()["datasets"][0]["dataset"]["id"]
+    od = client.get("/api/dashboards", headers=oh).json()[0]
+    bad = od["widgets"] + [{**d["widgets"][1], "id": "zz", "dataset_id": ids[0]}]
+    assert client.patch(f"/api/dashboards/{od['id']}", headers=oh, json={"widgets": bad}).status_code == 404
+    assert own

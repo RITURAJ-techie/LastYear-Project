@@ -43,6 +43,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 | **Anomaly detection** | **Relationship-aware Isolation Forest**: adds log-ratio features for correlated measures so records that break a normal relationship (for example cost > revenue) are caught too, with per-record explanations ("cost is unusually high, 7.6σ"). |
 | **Key-driver analysis** | A **Random Forest** model ranks which factors explain a target metric. It excludes "component" measures (such as cost inside revenue) so they aren't reported as drivers. |
 | **Segmentation** | **K-Means** clustering with k chosen automatically by silhouette score, a PCA projection and a profile of each segment. |
+| **Combined dashboards** | One dashboard over several files: integrated cross-file charts first, then a labelled section per file. Shared filters apply to every chart that has the column (the date range uses each file's own date column), and the chart builder lets you pick the dataset for each chart. Created automatically by a batch upload, or on demand from the Insights Hub. |
 | **Insights Hub** | Combined insights across several datasets (for example everything from one batch upload). Findings from every dataset are ranked together, duplicates are merged, and you get a cross-dataset action plan, the links between datasets, and an optional Sarvam AI briefing across all of them. |
 | **Insights & recommendations** | A rule engine turns the findings into ranked, plain-language insights, each with a recommended action. It knows whether higher is better for a metric (rising cost is flagged as a risk, not a success). Also produces an executive summary and action plan, and an HTML report you can download. |
 | **Ask your data (NLQ)** | Ask questions in plain English, such as "revenue by region per quarter", "top 5 brands", or "how many orders in 2024 in North?". A built-in semantic parser understands aggregations, groupings, time grains, filters, top-N and synonyms. Answers come as a chart, a table and the generated SQL, and can be pinned to a dashboard. |
@@ -194,6 +195,7 @@ All endpoints are under `/api` and need a bearer token, except login, register a
 | `POST /auth/register` · `POST /auth/login` · `GET /auth/me` | Authentication |
 | `POST /datasets/upload` | Upload a file and run ETL (multipart: `file`, `name`, `options`) |
 | `POST /datasets/upload-batch` | Upload up to 20 files at once (multipart: `files[]`, `options`, `auto_integrate`). Returns datasets, failed files, relationships and the integrated dataset |
+| `POST /dashboards/combined` | Build one dashboard over several datasets (`{dataset_ids, name?}`) |
 | `GET /insights/combined?ids=1,2,3[&ai=true]` | Ranked, de-duplicated insights and action plan across datasets |
 | `POST /datasets/sql/test` · `POST /datasets/sql` | Test a database connection, then import a table or query |
 | `POST /datasets/api` | Import from a REST endpoint |

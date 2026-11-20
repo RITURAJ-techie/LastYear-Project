@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowRight, CheckCircle2, Info, Lightbulb, Link2, ShieldCheck, Sparkles, Table2, TrendingDown, UploadCloud, Wrench } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { AlertTriangle, ArrowRight, CheckCircle2, Info, LayoutDashboard, Lightbulb, Link2, ShieldCheck, Sparkles, Table2, TrendingDown, UploadCloud, Wrench } from "lucide-react";
 import { api, errMsg } from "../api";
 import { useFetch } from "../hooks";
 import type { Dataset, Insight } from "../types";
@@ -42,6 +42,13 @@ export default function InsightsHub() {
   const [error, setError] = useState<string | null>(null);
   const [ai, setAi] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
+  const [dashBusy, setDashBusy] = useState(false);
+  const nav = useNavigate();
+  const openDashboard = async () => {
+    setDashBusy(true);
+    try { nav(`/dashboards/${(await api.post("/api/dashboards/combined", { dataset_ids: selected })).data.id}`); }
+    catch (e) { setError(errMsg(e)); setDashBusy(false); }
+  };
 
   // default selection: everything ready (when the URL names nothing)
   useEffect(() => {
@@ -90,7 +97,12 @@ export default function InsightsHub() {
   return (
     <div>
       <PageHeader title="Insights Hub" subtitle="Ranked insights and recommended actions across several datasets at once" icon={<Lightbulb className="h-5 w-5" />}
-        actions={<Link to="/sources"><Button icon={<UploadCloud className="h-4 w-4" />}>Upload more files</Button></Link>} />
+        actions={<>
+          <Link to="/sources"><Button icon={<UploadCloud className="h-4 w-4" />}>Upload more files</Button></Link>
+          <Button variant="primary" icon={<LayoutDashboard className="h-4 w-4" />} loading={dashBusy} disabled={!selected.length} onClick={openDashboard}>
+            {selected.length > 1 ? "Build combined dashboard" : "Build dashboard"}
+          </Button>
+        </>} />
 
       <div className="no-print mb-5 rounded-xl border border-line bg-surface p-3">
         <div className="mb-2 flex items-center justify-between text-xs text-muted">

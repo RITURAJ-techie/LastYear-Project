@@ -111,7 +111,9 @@ def run_out(r: ETLRun, steps: bool = True) -> dict[str, Any]:
 
 
 def dashboard_out(d: Dashboard) -> dict[str, Any]:
+    ids = sorted({d.dataset_id} | {w["dataset_id"] for w in (d.widgets or []) if w.get("dataset_id")})
     return {
+        "dataset_ids": ids, "combined": len(ids) > 1,
         "id": d.id, "name": d.name, "description": d.description, "dataset_id": d.dataset_id,
         "dataset_name": d.dataset.name if d.dataset else None, "widgets": d.widgets or [], "filters": d.filters or [],
         "is_auto": bool(d.is_auto), "created_at": d.created_at.isoformat() if d.created_at else None,

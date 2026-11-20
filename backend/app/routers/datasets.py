@@ -24,7 +24,7 @@ from ..deps import dataset_out, owned_dataset, ready_dataset, run_out
 from ..etl import extract
 from ..etl.pipeline import run_etl
 from ..etl.transform import DEFAULT_OPTIONS
-from ..services import create_dataset, delete_dataset
+from ..services import create_combined_dashboard, create_dataset, delete_dataset
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
 
@@ -131,7 +131,14 @@ async def upload_batch(files: list[UploadFile] = File(...), options: str | None 
             integrated = build_integrated(db, user, ready, rels, integrated_name)
         except HTTPException as exc:
             failed.append({"file": "(integrated dataset)", "error": str(exc.detail)})
+    combined_dashboard = None
+    if len(ready) > 1:
+        integ_ds = db.get(Dataset, integrated["dataset"]["id"]) if integrated and integrated["run"]["status"] == "success" else None
+        dsets = ready + ([integ_ds] if integ_ds else [])
+        d = create_combined_dashboard(db, user, dsets, integ_ds)
+        combined_dashboard = d.id if d else None
     return {
+        "combined_dashboard_id": combined_dashboard,
         "datasets": [c for c in created if c["run"]["status"] == "success"],
         "failed": failed,
         "relationships": rels,

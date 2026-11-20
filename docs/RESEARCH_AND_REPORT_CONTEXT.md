@@ -42,7 +42,7 @@ This document collects everything needed to write (A) a research paper and (B) a
 | Code size (non-blank lines) | Backend app 3,259 · frontend 3,172 · tests 247 · scripts (data generator and evaluation) 686 · **total about 7,360 LOC** |
 | API | 46 REST endpoints in 6 routers (auth, datasets, analytics, dashboards, warehouse, ai), with automatic OpenAPI docs at `/docs` |
 | UI | 10 pages plus 8 dataset analysis tabs, 12 widget/chart types, light and dark themes, responsive |
-| Tests | 22 automated tests (pytest), all passing, plus an 8-experiment evaluation suite |
+| Tests | 23 automated tests (pytest), all passing, plus an 8-experiment evaluation suite |
 | Repository | `github.com/RITURAJ-techie/LastYear-Project` (branch `claude/magical-tesla-qj88kw`) |
 
 **Headline results** (from `evaluation/RESULTS.md`):
@@ -264,6 +264,7 @@ The score is base weight × measure rank × magnitude. The top items form the ex
 **Multi-dataset (Insights Hub):**
 - Each dataset's insights are computed in parallel (thread pool) and merged by score, with at most 4 per dataset in the headline list.
 - Identical findings coming from an integrated dataset and its own sources are merged into one entry tagged with every dataset.
+- **Combined dashboards:** each widget stores its own `dataset_id`. Dashboard filters are mapped onto each dataset: `__time__` becomes that dataset's primary date column, and a filter on a column the dataset lacks is skipped and reported as "not filtered by".
 - A batch upload links its files with the FK discovery of A6.5 and builds an integrated dataset. The base is the "fact" dataset with the most many-to-one links, joined to each dataset it references.
 
 ### A6.11 Natural-language query processing
@@ -618,6 +619,7 @@ InsightFlow AI. **Advantages:**
 | FR-26 | Users can upload up to 20 files in one batch; failed files are reported without stopping the batch |
 | FR-27 | On batch upload, the system links related files by discovered keys and builds an integrated dataset automatically |
 | FR-28 | Users can view combined, ranked and de-duplicated insights and an action plan across several datasets (Insights Hub) |
+| FR-29 | The system builds a combined dashboard over several datasets (automatically after batch upload, or on demand); each chart reads from its own dataset and shared filters apply wherever the column exists |
 
 ### 3.6 Non-functional requirements
 | ID | Category | Requirement |
@@ -930,9 +932,10 @@ See the README "REST API" table (46 endpoints). Include it as an appendix.
 | TC-27 | Batch | Batch upload of 3 related CSVs + 1 PDF | orders, customers, products, notes.pdf | 3 datasets; PDF reported as failed; 2 links found; integrated dataset of 900 rows with joined attributes | Pass |
 | TC-28 | Batch | Batch limits and integration off | 21 files; auto_integrate = false | 400 error; no integrated dataset | Pass |
 | TC-29 | Insights Hub | Combined insights | 4 dataset ids | Totals, ranked insights tagged by dataset, relationships | Pass |
+| TC-30 | Combined dashboard | Auto-created after batch; shared date + column filters; regenerate; dataset deletion; cross-user widget | 3 related files | 4 sections; every widget resolves; inapplicable filters reported as ignored; widgets of a deleted dataset removed; foreign dataset rejected (404) | Pass |
 
 ### 6.3 Results
-22/22 automated tests pass (`pytest -q`). For accuracy and performance results, see B8 and A9.
+23/23 automated tests pass (`pytest -q`). For accuracy and performance results, see B8 and A9.
 
 ## B8. Chapter 7: Results and discussion
 - Screenshots `01–14` with captions:

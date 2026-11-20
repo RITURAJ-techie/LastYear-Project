@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Profile, Widget, WidgetType } from "../types";
+import type { Profile, Source, Widget, WidgetType } from "../types";
 import { label } from "../format";
 import { Button, Field, Input, Modal, Select } from "./ui";
 import ChartRenderer from "./charts/ChartRenderer";
@@ -16,9 +16,16 @@ function uid() {
   return Math.random().toString(36).slice(2, 12);
 }
 
-export default function ChartBuilder({ open, onClose, onSave, profile, datasetId, initial }: {
-  open: boolean; onClose: () => void; onSave: (w: Widget) => void; profile: Profile; datasetId: number; initial?: Widget | null;
+export default function ChartBuilder({ open, onClose, onSave, sources, defaultDatasetId, initial }: {
+  open: boolean; onClose: () => void; onSave: (w: Widget) => void; sources: Source[]; defaultDatasetId: number; initial?: Widget | null;
 }) {
+  const [datasetId, setDatasetId] = useState(defaultDatasetId);
+  useEffect(() => {
+    if (open) setDatasetId(initial?.dataset_id ?? defaultDatasetId);
+  }, [open, initial, defaultDatasetId]);
+  const source = sources.find((x) => x.datasetId === datasetId) ?? sources[0];
+  const profile: Profile = source.profile;
+  const multi = sources.length > 1;
   const cols = profile.columns;
   const measures = profile.measures;
   const groupable = cols.filter((c) => c.role !== "measure" || c.unique <= 30).map((c) => c.name);
@@ -38,14 +45,16 @@ export default function ChartBuilder({ open, onClose, onSave, profile, datasetId
 
   useEffect(() => {
     if (!open) return;
-    const s = initial?.spec ?? {};
+    const same = !!initial && (initial.dataset_id ?? defaultDatasetId) === datasetId;
+    const s = same ? initial!.spec : {};
     setType(initial?.type ?? "bar");
-    setTitle(initial?.title ?? "");
+    setTitle(same ? initial!.title : "");
     setW(initial?.w ?? 2);
     setX(s.x ?? profile.dimensions[0] ?? profile.primary_time ?? "");
     setSeries(s.series ?? "");
     setMeasure(s.y?.[0]?.column ?? s.column ?? measures[0] ?? "*");
-    setAgg(s.y?.[0]?.agg ?? s.agg ?? "sum");
+    const m0 = s.y?.[0]?.column ?? s.column ?? measures[0];
+    setAgg(s.y?.[0]?.agg ?? s.agg ?? profile.columns.find((c) => c.name === m0)?.default_agg ?? "sum");
     setMeasure2(s.y?.[1]?.column ?? "");
     setGrain(s.time_grain ?? "month");
     setLimit(s.limit ?? 12);
@@ -53,7 +62,7 @@ export default function ChartBuilder({ open, onClose, onSave, profile, datasetId
     setYScatter(s.y && typeof s.y === "string" ? s.y : measures[1] ?? measures[0] ?? "");
     setTableCols(s.columns ?? cols.slice(0, 6).map((c) => c.name));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, initial]);
+  }, [open, initial, datasetId]);
 
   const isTimeX = x && x === profile.primary_time || cols.find((c) => c.name === x)?.semantic_type === "datetime";
 
@@ -74,16 +83,30 @@ export default function ChartBuilder({ open, onClose, onSave, profile, datasetId
       : type === "scatter" ? `${label(measure)} vs ${label(yScatter)}`
       : type === "heatmap" ? "Correlation Matrix" : type === "table" ? "Records"
       : `${measure === "*" ? "Records" : label(measure)} by ${label(x)}`;
-    return { id: initial?.id ?? uid(), type, title: title || auto, w: type === "kpi" ? Math.min(w, 1) || 1 : w, spec };
-  }, [type, title, x, series, measure, agg, measure2, grain, limit, w, fmt, yScatter, tableCols, isTimeX, initial, measures]);
+    return { id: initial?.id ?? uid(), type, title: title || auto, w: type === "kpi" ? Math.min(w, 1) || 1 : w, spec,
+             ...(multi ? { dataset_id: datasetId } : {}) };
+  }, [type, title, x, series, measure, agg, measure2, grain, limit, w, fmt, yScatter, tableCols, isTimeX, initial, measures, multi, datasetId]);
 
-  const preview = useWidgetData(datasetId, widget, []);
+  // only preview once every referenced column exists in the selected dataset (avoids a stale request
+  // with the previous dataset's columns right after switching datasets)
+  const known = new Set(cols.map((c) => c.name));
+  const sp = widget.spec;
+  const refs = [sp.x, sp.series, sp.column, sp.color, sp.order_by, ...(Array.isArray(sp.y) ? sp.y.map((y: any) => y.column) : [sp.y]), ...(sp.columns ?? [])];
+  const valid = refs.every((c) => !c || c === "*" || known.has(c));
+  const preview = useWidgetData(datasetId, widget, [], valid);
   const needsX = !["kpi", "histogram", "scatter", "table", "heatmap"].includes(type);
 
   return (
     <Modal open={open} onClose={onClose} title={initial ? "Edit chart" : "Add chart"} wide>
       <div className="grid gap-5 md:grid-cols-[300px_1fr]">
         <div className="space-y-3">
+          {multi && (
+            <Field label="Dataset">
+              <Select value={datasetId} onChange={(e) => setDatasetId(Number(e.target.value))} className="w-full">
+                {sources.map((x) => <option key={x.datasetId} value={x.datasetId}>{x.name}</option>)}
+              </Select>
+            </Field>
+          )}
           <Field label="Chart type">
             <Select value={type} onChange={(e) => setType(e.target.value as WidgetType)} className="w-full">
               {TYPES.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -107,7 +130,11 @@ export default function ChartBuilder({ open, onClose, onSave, profile, datasetId
           {type !== "heatmap" && type !== "table" && (
             <div className="grid grid-cols-[1fr_110px] gap-2">
               <Field label={type === "scatter" ? "X measure" : "Measure"}>
-                <Select value={measure} onChange={(e) => setMeasure(e.target.value)} className="w-full">
+                <Select value={measure} onChange={(e) => {
+                  setMeasure(e.target.value);
+                  const d = cols.find((c) => c.name === e.target.value)?.default_agg;
+                  if (d) setAgg(d);  // e.g. average for age/price/rating, sum for revenue
+                }} className="w-full">
                   {type !== "histogram" && type !== "scatter" && <option value="*">Record count</option>}
                   {measures.map((m) => <option key={m} value={m}>{label(m)}</option>)}
                 </Select>

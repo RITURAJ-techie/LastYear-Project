@@ -92,11 +92,86 @@ def generate(table: str, profile: dict[str, Any]) -> list[dict[str, Any]]:
     return widgets
 
 
+TIME_ALIAS = "__time__"  # dashboard filter meaning "this dataset's primary date column"
+
+
+def applicable_filters(profile: dict[str, Any], filters: list[dict[str, Any]] | None) -> tuple[list[dict[str, Any]], list[str]]:
+    """Map dashboard-level filters onto one dataset.
+
+    On a combined (multi-dataset) dashboard a filter may name a column that only some datasets
+    have; those widgets simply ignore it. ``__time__`` resolves to each dataset's primary date."""
+    names = {c["name"] for c in profile.get("columns", [])}
+    keep, ignored = [], []
+    for f in filters or []:
+        col = f.get("column")
+        if col == TIME_ALIAS:
+            t = profile.get("primary_time")
+            if t:
+                keep.append({**f, "column": t})
+            else:
+                ignored.append("date range")
+        elif col in names:
+            keep.append(f)
+        else:
+            ignored.append(str(col))
+    return keep, ignored
+
+
+def compact(table: str, profile: dict[str, Any], dataset_id: int) -> list[dict[str, Any]]:
+    """A short per-dataset block for combined dashboards: 2 KPIs, the main trend and the main breakdown."""
+    full = generate(table, profile)
+    picked: list[dict[str, Any]] = []
+    # row 1: KPI cards spread across the full width (widths always sum to 4)
+    kpis = [w for w in full if w["type"] == "kpi"][:4]
+    widths = {1: [4], 2: [2, 2], 3: [1, 1, 2], 4: [1, 1, 1, 1]}.get(len(kpis), [])
+    picked += [{**w, "w": wd} for w, wd in zip(kpis, widths)]
+    # row 2: main trend + main breakdown side by side (or one full-width chart)
+    trend = next((w for w in full if w["type"] in {"area", "line"}), None)
+    breakdown = next((w for w in full if w["type"] in {"bar", "hbar", "donut", "pie"}), None)
+    charts = [c for c in (trend, breakdown) if c] or [w for w in full if w["type"] in {"histogram", "table"}][:1]
+    picked += [{**c, "w": 2 if len(charts) == 2 else 4} for c in charts]
+    for w in picked:
+        w["dataset_id"] = dataset_id
+    return picked
+
+
+def section(title: str, subtitle: str, dataset_id: int | None) -> dict[str, Any]:
+    return {"id": _wid(), "type": "section", "title": title, "w": 4, "spec": {"subtitle": subtitle}, "dataset_id": dataset_id}
+
+
+def generate_combined(datasets: list[Any], integrated: Any | None = None) -> list[dict[str, Any]]:
+    """Widgets for a multi-dataset dashboard. Every widget carries the ``dataset_id`` it reads from."""
+    widgets: list[dict[str, Any]] = []
+    if integrated is not None:
+        widgets.append(section(f"{integrated.name}", f"Cross-file view · {integrated.row_count:,} rows joined from the linked files", integrated.id))
+        for w in generate(integrated.table_name, integrated.profile):
+            if w["type"] == "table":
+                continue
+            w["dataset_id"] = integrated.id
+            widgets.append(w)
+    for d in datasets:
+        if integrated is not None and d.id == integrated.id:
+            continue
+        widgets.append(section(d.name, f"{d.row_count:,} rows · {d.column_count} columns", d.id))
+        widgets.extend(compact(d.table_name, d.profile, d.id))
+    return widgets
+
+
 def widget_data(table: str, profile: dict[str, Any], widget: dict[str, Any], filters: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     """Resolve any widget type to its data, applying dashboard-level filters."""
+    out = _widget_data(table, profile, widget, filters)
+    _, ignored = applicable_filters(profile, filters)
+    if ignored and isinstance(out, dict):
+        out["filters_ignored"] = ignored
+    return out
+
+
+def _widget_data(table: str, profile: dict[str, Any], widget: dict[str, Any], filters: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     wtype = widget.get("type")
+    if wtype == "section":
+        return {}
     spec = dict(widget.get("spec") or {})
-    spec["filters"] = list(spec.get("filters") or []) + list(filters or [])
+    spec["filters"] = list(spec.get("filters") or []) + applicable_filters(profile, filters)[0]
     if wtype == "kpi":
         return q.run_kpi_query(table, profile, spec)
     if wtype == "table":

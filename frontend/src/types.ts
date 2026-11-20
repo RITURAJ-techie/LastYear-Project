@@ -83,7 +83,7 @@ export type Filter = { column: string; op: string; value: unknown };
 
 export type WidgetType =
   | "kpi" | "line" | "area" | "bar" | "hbar" | "stacked_bar" | "pie" | "donut"
-  | "scatter" | "histogram" | "heatmap" | "table";
+  | "scatter" | "histogram" | "heatmap" | "table" | "section";
 
 export type Widget = {
   id: string;
@@ -91,13 +91,19 @@ export type Widget = {
   title: string;
   w: number;
   spec: Record<string, any>;
+  /** combined dashboards: the dataset this widget reads from (defaults to the dashboard's dataset) */
+  dataset_id?: number;
 };
+
+export type Source = { datasetId: number; name: string; profile: Profile };
 
 export type Dashboard = {
   id: number;
   name: string;
   description: string;
   dataset_id: number;
+  dataset_ids: number[];
+  combined: boolean;
   dataset_name: string | null;
   widgets: Widget[];
   filters: Filter[];

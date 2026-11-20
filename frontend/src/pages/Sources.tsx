@@ -1,6 +1,6 @@
 import { useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, Database, FileUp, Globe, Lightbulb, Link2, Settings2, Sparkles, UploadCloud, X, XCircle } from "lucide-react";
+import { CheckCircle2, Database, FileUp, Globe, LayoutDashboard, Lightbulb, Link2, Settings2, Sparkles, UploadCloud, X, XCircle } from "lucide-react";
 import { api, errMsg } from "../api";
 import type { Dataset, ETLRun } from "../types";
 import { Badge, Button, Card, ErrorBox, Field, Input, PageHeader, Select, Tabs, cx } from "../components/ui";
@@ -71,6 +71,7 @@ type BatchResult = {
   relationships: { from_dataset: string; from_column: string; to_dataset: string; to_column: string; confidence: number }[];
   integrated: { dataset: Dataset; run: ETLRun } | null;
   insight_dataset_ids: number[];
+  combined_dashboard_id: number | null;
 };
 
 function BatchSummary({ r }: { r: BatchResult }) {
@@ -86,8 +87,13 @@ function BatchSummary({ r }: { r: BatchResult }) {
             {r.failed.length ? ` · ${r.failed.length} file${r.failed.length === 1 ? "" : "s"} skipped` : ""}
           </div>
         </div>
-        <Button variant="primary" icon={<Lightbulb className="h-4 w-4" />} disabled={!r.insight_dataset_ids.length}
-          onClick={() => nav(`/insights?ids=${r.insight_dataset_ids.join(",")}`)}>View combined insights</Button>
+        <div className="flex flex-wrap gap-2">
+          {r.combined_dashboard_id && (
+            <Button icon={<LayoutDashboard className="h-4 w-4" />} onClick={() => nav(`/dashboards/${r.combined_dashboard_id}`)}>Open combined dashboard</Button>
+          )}
+          <Button variant="primary" icon={<Lightbulb className="h-4 w-4" />} disabled={!r.insight_dataset_ids.length}
+            onClick={() => nav(`/insights?ids=${r.insight_dataset_ids.join(",")}`)}>View combined insights</Button>
+        </div>
       </div>
       {r.relationships.length > 0 && (
         <div className="rounded-lg border border-line p-3">

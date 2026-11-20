@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { LayoutDashboard, Plus, Trash2, Wand2 } from "lucide-react";
+import { Layers, LayoutDashboard, Plus, Trash2, Wand2 } from "lucide-react";
 import { api, errMsg } from "../api";
 import { useFetch } from "../hooks";
 import type { Dashboard, Dataset } from "../types";
@@ -48,14 +48,15 @@ export default function Dashboards() {
             <div key={d.id} className="group relative rounded-xl border border-line bg-surface p-4 transition hover:border-accent">
               <Link to={`/dashboards/${d.id}`} className="block">
                 <div className="mb-3 grid h-20 grid-cols-4 gap-1">
-                  {d.widgets.slice(0, 8).map((w, i) => (
+                  {d.widgets.filter((w) => w.type !== "section").slice(0, 8).map((w, i) => (
                     <div key={i} className="rounded bg-surface2" style={{ gridColumn: `span ${Math.min(w.w, 4)}` }}>
                       <div className="h-full rounded" style={{ background: `color-mix(in srgb, var(--series-${(i % 3) + 1}) 18%, transparent)` }} />
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-2"><span className="truncate text-sm font-semibold">{d.name}</span>{d.is_auto && <Badge tone="accent"><Wand2 className="h-3 w-3" />auto</Badge>}</div>
-                <div className="mt-0.5 text-xs text-muted">{d.dataset_name} · {d.widgets.length} widgets · updated {timeAgo(d.updated_at)}</div>
+                <div className="flex items-center gap-2"><span className="truncate text-sm font-semibold">{d.name}</span>
+                  {d.combined ? <Badge tone="info"><Layers className="h-3 w-3" />{d.dataset_ids.length} datasets</Badge> : d.is_auto && <Badge tone="accent"><Wand2 className="h-3 w-3" />auto</Badge>}</div>
+                <div className="mt-0.5 text-xs text-muted">{d.combined ? "Combined dashboard" : d.dataset_name} · {d.widgets.filter((w) => w.type !== "section").length} widgets · updated {timeAgo(d.updated_at)}</div>
               </Link>
               <button onClick={() => remove(d.id)} className="absolute right-3 top-3 rounded p-1 text-muted opacity-0 hover:bg-surface2 hover:text-critical group-hover:opacity-100" title="Delete"><Trash2 className="h-4 w-4" /></button>
             </div>
