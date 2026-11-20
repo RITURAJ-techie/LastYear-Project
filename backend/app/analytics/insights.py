@@ -17,6 +17,9 @@ from ..ai import llm
 from . import ml, stats, trends
 
 
+MIN_ROWS_PER_PERIOD = 5    # below this, period aggregates are too sparse to support trend claims
+MIN_DRIVER_R2 = 0.3        # a driver model that explains less than this is too weak to report
+
 LOWER_IS_BETTER = re.compile(r"(cost|expense|spend|discount|delay|days|duration|churn|return|refund|defect|complaint|error|loss|bounce|wait|latency|debt|absence|attrition)", re.I)
 
 
@@ -77,11 +80,18 @@ def generate(table: str, profile: dict[str, Any], quality: dict[str, Any]) -> di
     facts: dict[str, Any] = {}
 
     # 1. Trends, seasonality, forecast for the top measures
+    n_rows = int(wh.query_df(f"SELECT count(*) AS n FROM {wh.safe_table(table)}")["n"].iloc[0])
     for i, m in enumerate(measures[:3] if profile.get("primary_time") else []):
         sem = cols[m]["semantic_type"]
         tr = trends.analyze(table, profile, measure=m)
         if not tr.get("available"):
             continue
+        periods = sum(1 for p in tr["points"] if "actual" in p)
+        if n_rows / max(periods, 1) < MIN_ROWS_PER_PERIOD:
+            # e.g. a 98-row product catalogue spread over 57 launch months: period-level
+            # "trends", "spikes" and "seasonality" would just be noise
+            facts.setdefault("skipped", []).append(f"time analysis of {m}: only {n_rows / max(periods, 1):.1f} rows per {tr['grain']}")
+            break
         facts.setdefault("trends", []).append({k: tr[k] for k in ("measure", "agg", "grain", "trend", "growth", "seasonality", "forecast")})
         weight = 1.0 - 0.2 * i
         g, trd = tr["growth"], tr["trend"]
@@ -212,7 +222,7 @@ def generate(table: str, profile: dict[str, Any], quality: dict[str, Any]) -> di
             kd = ml.key_drivers(table, profile)
         except Exception:  # noqa: BLE001 - driver analysis is best-effort
             kd = {"available": False}
-        if kd.get("available") and kd["drivers"]:
+        if kd.get("available") and kd["drivers"] and kd["r2_in_sample"] >= MIN_DRIVER_R2:
             facts["key_drivers"] = {"target": kd["target"], "drivers": kd["drivers"][:5]}
             top = kd["drivers"][0]
             out.append(_insight("driver", "info", f"Biggest driver of {_t(kd['target'])}: {_t(top['feature'])}",
@@ -279,6 +289,25 @@ def ai_narrative(dataset_name: str, result: dict[str, Any]) -> str | None:
         "Write an executive briefing in Markdown with these sections:\n"
         "## Executive summary (3-4 sentences)\n## Key findings (bullets, most important first)\n"
         "## Recommended actions (numbered, each tied to a finding, with expected impact)\n## Risks & watch-list\n\n"
+        f"Findings JSON:\n{json.dumps(payload, default=str)[:60000]}"
+    )
+    return llm.complete(AI_SYSTEM, prompt, max_tokens=6000, effort="medium")
+
+
+def ai_combined_narrative(combined: dict[str, Any]) -> str | None:
+    """Cross-dataset executive briefing from the combined findings (no raw rows are sent)."""
+    payload = {
+        "datasets": [{k: d[k] for k in ("name", "row_count", "quality_before", "quality_after", "issues_fixed", "summary")}
+                     for d in combined["datasets"]],
+        "top_findings": [{k: i[k] for k in ("dataset_name", "severity", "title", "description", "recommendation")}
+                         for i in combined["top_insights"]],
+        "relationships": [f"{r['from_dataset']}.{r['from_column']} -> {r['to_dataset']}.{r['to_column']}"
+                          for r in combined["relationships"]],
+    }
+    prompt = (
+        "These findings come from several related business datasets analysed together. Write a Markdown briefing with:\n"
+        "## Overall picture (3-4 sentences connecting the datasets)\n## Most important findings (bullets, name the dataset)\n"
+        "## Recommended actions (numbered, prioritised, each tied to a finding)\n## Data quality notes\n\n"
         f"Findings JSON:\n{json.dumps(payload, default=str)[:60000]}"
     )
     return llm.complete(AI_SYSTEM, prompt, max_tokens=6000, effort="medium")

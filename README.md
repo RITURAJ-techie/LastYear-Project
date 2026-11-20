@@ -29,7 +29,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 
 | Area | What it does |
 |---|---|
-| **Multi-source ingestion** | Upload CSV/TSV/Excel (each sheet becomes a dataset)/JSON/Parquet. Connect to any SQLAlchemy database (PostgreSQL, MySQL, SQL Server, SQLite…) by table or custom query. Pull from REST APIs that return JSON or CSV, with an optional auth header and records path. |
+| **Multi-source ingestion** | Upload CSV/TSV/Excel (each sheet becomes a dataset)/JSON/Parquet, **one file or up to 20 at once**. In a batch upload, related files are linked by their shared keys and joined into an integrated dataset automatically. Connect to any SQLAlchemy database (PostgreSQL, MySQL, SQL Server, SQLite…) by table or custom query. Pull from REST APIs that return JSON or CSV, with an optional auth header and records path. |
 | **Automated ETL** | A 12-step, fully logged pipeline: column-name standardisation, whitespace/null-token cleanup, type inference (currency like `$1,234.50`, `(50)` negatives, percentages, mixed date formats, yes/no booleans), de-duplication, unifying inconsistent labels (`north`, `NORTH `, `North` → `North`), dropping sparse columns, outlier flagging/capping, and imputing missing values. Each rule can be switched on or off. |
 | **Data warehouse** | DuckDB columnar warehouse with **staging** (`stg_`), **core** (`dw_`), **mart** views (`mart_*_monthly`, `mart_*_by_<dim>`) and a shared conformed **date dimension** (`dim_date`). |
 | **Scheduled refresh** | A background scheduler re-runs ETL for each source on its interval (hourly, daily and so on). Every run is recorded with its step log, row counts and duration. |
@@ -43,6 +43,7 @@ InsightFlow AI lets users upload or connect data in many formats (CSV, Excel, JS
 | **Anomaly detection** | **Relationship-aware Isolation Forest**: adds log-ratio features for correlated measures so records that break a normal relationship (for example cost > revenue) are caught too, with per-record explanations ("cost is unusually high, 7.6σ"). |
 | **Key-driver analysis** | A **Random Forest** model ranks which factors explain a target metric. It excludes "component" measures (such as cost inside revenue) so they aren't reported as drivers. |
 | **Segmentation** | **K-Means** clustering with k chosen automatically by silhouette score, a PCA projection and a profile of each segment. |
+| **Insights Hub** | Combined insights across several datasets (for example everything from one batch upload). Findings from every dataset are ranked together, duplicates are merged, and you get a cross-dataset action plan, the links between datasets, and an optional Sarvam AI briefing across all of them. |
 | **Insights & recommendations** | A rule engine turns the findings into ranked, plain-language insights, each with a recommended action. It knows whether higher is better for a metric (rising cost is flagged as a risk, not a success). Also produces an executive summary and action plan, and an HTML report you can download. |
 | **Ask your data (NLQ)** | Ask questions in plain English, such as "revenue by region per quarter", "top 5 brands", or "how many orders in 2024 in North?". A built-in semantic parser understands aggregations, groupings, time grains, filters, top-N and synonyms. Answers come as a chart, a table and the generated SQL, and can be pinned to a dashboard. |
 | **Optional generative AI** | With `SARVAM_API_KEY` set, Sarvam AI writes executive briefings from the computed findings and turns free-form questions into validated, read-only SQL. **Everything works without it.** |
@@ -192,6 +193,8 @@ All endpoints are under `/api` and need a bearer token, except login, register a
 |---|---|
 | `POST /auth/register` · `POST /auth/login` · `GET /auth/me` | Authentication |
 | `POST /datasets/upload` | Upload a file and run ETL (multipart: `file`, `name`, `options`) |
+| `POST /datasets/upload-batch` | Upload up to 20 files at once (multipart: `files[]`, `options`, `auto_integrate`). Returns datasets, failed files, relationships and the integrated dataset |
+| `GET /insights/combined?ids=1,2,3[&ai=true]` | Ranked, de-duplicated insights and action plan across datasets |
 | `POST /datasets/sql/test` · `POST /datasets/sql` | Test a database connection, then import a table or query |
 | `POST /datasets/api` | Import from a REST endpoint |
 | `GET/PATCH/DELETE /datasets/{id}` | Catalog entry, profile and quality; update the schedule or ETL rules |

@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from . import scheduler
 from .config import CORS_ORIGINS, FRONTEND_DIST, SAMPLE_DIR, SCHEDULER_ENABLED, SEED_DEMO
 from .database import init_db
-from .routers import ai, analytics, auth, dashboards, datasets, warehouse
+from .routers import ai, analytics, auth, dashboards, datasets, insights, warehouse
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -38,7 +38,7 @@ app = FastAPI(
 )
 app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-for r in (auth.router, datasets.router, analytics.router, dashboards.router, warehouse.router, ai.router):
+for r in (auth.router, datasets.router, analytics.router, dashboards.router, warehouse.router, insights.router, ai.router):
     app.include_router(r)
 
 

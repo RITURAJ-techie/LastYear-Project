@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from .. import warehouse as wh
 from ..analytics import dashboard as dash
+from ..analytics import relationships
 from ..analytics import query as q
 from ..auth import get_current_user
 from ..config import MAX_UPLOAD_MB, UPLOAD_DIR
@@ -49,13 +50,12 @@ def _parse_options(options: str | None) -> dict[str, Any]:
         raise HTTPException(400, "Invalid ETL options JSON")
 
 
-@router.post("/upload")
-async def upload(file: UploadFile = File(...), name: str | None = Form(None), description: str = Form(""),
-                 options: str | None = Form(None), user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def _save_upload(file: UploadFile) -> tuple[Path, str]:
+    """Stream an upload to disk (size-limited). Raises HTTPException on bad type/size."""
     filename = Path(file.filename or "upload.csv").name
     ext = Path(filename).suffix.lower()
     if ext not in extract.SUPPORTED_EXTENSIONS:
-        raise HTTPException(400, f"Unsupported file type '{ext}'")
+        raise HTTPException(400, f"{filename}: unsupported file type '{ext}'")
     dest = UPLOAD_DIR / f"{uuid.uuid4().hex}{ext}"
     size = 0
     with dest.open("wb") as fh:
@@ -64,21 +64,104 @@ async def upload(file: UploadFile = File(...), name: str | None = Form(None), de
             if size > MAX_UPLOAD_MB * 1024 * 1024:
                 fh.close()
                 dest.unlink(missing_ok=True)
-                raise HTTPException(413, f"File exceeds {MAX_UPLOAD_MB} MB")
+                raise HTTPException(413, f"{filename}: file exceeds {MAX_UPLOAD_MB} MB")
             fh.write(chunk)
+    return dest, filename
+
+
+def _ingest_file(db: Session, user: User, dest: Path, filename: str, name: str | None, description: str,
+                 options: dict[str, Any]) -> list[dict[str, Any]]:
+    """Extract a saved file (every Excel sheet becomes a dataset) and run ETL on each frame."""
     try:
         frames = extract.read_file(dest, filename)
     except Exception as exc:  # noqa: BLE001
         dest.unlink(missing_ok=True)
-        raise HTTPException(400, f"Could not read file: {exc}")
-    base = (name or Path(filename).stem).strip()
+        raise HTTPException(400, f"{filename}: could not read file: {exc}")
+    base = (name or Path(filename).stem.replace("_", " ").replace("-", " ")).strip()
     created = []
     for sheet, df in frames.items():
         ds_name = base if len(frames) == 1 else f"{base} – {sheet}"
         cfg = {"path": str(dest), "original_name": filename, "sheet": sheet if len(frames) > 1 else None}
-        ds, run = create_dataset(db, user, ds_name, "file", cfg, description, _parse_options(options), raw=df)
-        created.append({"dataset": dataset_out(ds), "run": run_out(run)})
+        ds, run = create_dataset(db, user, ds_name, "file", cfg, description, options, raw=df)
+        created.append({"dataset": dataset_out(ds), "run": run_out(run), "file": filename})
     return created
+
+
+@router.post("/upload")
+async def upload(file: UploadFile = File(...), name: str | None = Form(None), description: str = Form(""),
+                 options: str | None = Form(None), user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    dest, filename = await _save_upload(file)
+    return _ingest_file(db, user, dest, filename, name, description, _parse_options(options))
+
+
+MAX_BATCH_FILES = 20
+
+
+@router.post("/upload-batch")
+async def upload_batch(files: list[UploadFile] = File(...), options: str | None = Form(None),
+                       auto_integrate: bool = Form(True), integrated_name: str | None = Form(None),
+                       user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Upload several files at once: ETL each one, discover how they relate, optionally build an
+    integrated (joined) dataset, and return everything needed for combined insights.
+
+    A file that fails is reported in `failed` and never aborts the rest of the batch."""
+    if not files:
+        raise HTTPException(400, "No files uploaded")
+    if len(files) > MAX_BATCH_FILES:
+        raise HTTPException(400, f"At most {MAX_BATCH_FILES} files per batch")
+    opts = _parse_options(options)
+    created: list[dict[str, Any]] = []
+    failed: list[dict[str, str]] = []
+    for f in files:
+        try:
+            dest, filename = await _save_upload(f)
+            created.extend(_ingest_file(db, user, dest, filename, None, "Uploaded in a batch", opts))
+        except HTTPException as exc:
+            failed.append({"file": Path(f.filename or "?").name, "error": str(exc.detail)})
+    for c in created:
+        if c["run"]["status"] != "success":
+            failed.append({"file": c["file"], "error": c["run"]["error"] or "ETL failed"})
+    ready_ids = [c["dataset"]["id"] for c in created if c["run"]["status"] == "success"]
+    ready = db.query(Dataset).filter(Dataset.id.in_(ready_ids)).all() if ready_ids else []
+
+    rels = relationships.discover(ready) if len(ready) > 1 else []
+    integrated = None
+    if auto_integrate and rels:
+        try:
+            integrated = build_integrated(db, user, ready, rels, integrated_name)
+        except HTTPException as exc:
+            failed.append({"file": "(integrated dataset)", "error": str(exc.detail)})
+    return {
+        "datasets": [c for c in created if c["run"]["status"] == "success"],
+        "failed": failed,
+        "relationships": rels,
+        "integrated": integrated,
+        "insight_dataset_ids": ready_ids + ([integrated["dataset"]["id"]] if integrated else []),
+    }
+
+
+def build_integrated(db: Session, user: User, datasets: list[Dataset], rels: list[dict[str, Any]],
+                     name: str | None = None) -> dict[str, Any] | None:
+    """Join the 'fact' dataset (most outgoing many-to-one links) with every dataset it references."""
+    from .warehouse import JoinIn, JoinSpec, join
+
+    m2o = [r for r in rels if r["cardinality"] == "many-to-one"]
+    if not m2o:
+        return None
+    by_id = {d.id: d for d in datasets}
+    outgoing: dict[int, set[int]] = {}
+    for r in m2o:
+        outgoing.setdefault(r["from_dataset_id"], set()).add(r["to_dataset_id"])
+    base_id = max(outgoing, key=lambda i: (len(outgoing[i]), by_id[i].row_count))
+    joins, used = [], set()
+    for r in sorted((r for r in m2o if r["from_dataset_id"] == base_id), key=lambda r: -r["confidence"]):
+        if r["to_dataset_id"] in used:
+            continue
+        used.add(r["to_dataset_id"])
+        joins.append(JoinSpec(dataset_id=r["to_dataset_id"], left_column=r["from_column"], right_column=r["to_column"], how="left"))
+    title = name or ("Integrated: " + " + ".join([by_id[base_id].name] + [by_id[j.dataset_id].name for j in joins]))[:190]
+    return join(JoinIn(name=title, base_dataset_id=base_id, joins=joins,
+                       description="Automatically integrated from a batch upload using discovered relationships"), user=user, db=db)
 
 
 class SQLTestIn(BaseModel):

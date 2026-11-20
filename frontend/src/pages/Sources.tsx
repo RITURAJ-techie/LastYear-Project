@@ -1,6 +1,6 @@
 import { useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, Database, FileUp, Globe, Settings2, UploadCloud } from "lucide-react";
+import { CheckCircle2, Database, FileUp, Globe, Lightbulb, Link2, Settings2, Sparkles, UploadCloud, X, XCircle } from "lucide-react";
 import { api, errMsg } from "../api";
 import type { Dataset, ETLRun } from "../types";
 import { Badge, Button, Card, ErrorBox, Field, Input, PageHeader, Select, Tabs, cx } from "../components/ui";
@@ -65,41 +65,100 @@ function Result({ items }: { items: { dataset: Dataset; run: ETLRun }[] }) {
   );
 }
 
+type BatchResult = {
+  datasets: { dataset: Dataset; run: ETLRun; file: string }[];
+  failed: { file: string; error: string }[];
+  relationships: { from_dataset: string; from_column: string; to_dataset: string; to_column: string; confidence: number }[];
+  integrated: { dataset: Dataset; run: ETLRun } | null;
+  insight_dataset_ids: number[];
+};
+
+function BatchSummary({ r }: { r: BatchResult }) {
+  const nav = useNavigate();
+  return (
+    <div className="mt-4 space-y-3">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-accent bg-accentsoft p-4">
+        <Sparkles className="h-5 w-5 text-accent" />
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold">{r.datasets.length} dataset{r.datasets.length === 1 ? "" : "s"} loaded{r.integrated ? " + 1 integrated dataset" : ""}</div>
+          <div className="text-xs text-ink2">
+            {r.relationships.length ? `${r.relationships.length} relationship${r.relationships.length === 1 ? "" : "s"} discovered between your files` : "No shared keys found between the files – each is analysed on its own"}
+            {r.failed.length ? ` · ${r.failed.length} file${r.failed.length === 1 ? "" : "s"} skipped` : ""}
+          </div>
+        </div>
+        <Button variant="primary" icon={<Lightbulb className="h-4 w-4" />} disabled={!r.insight_dataset_ids.length}
+          onClick={() => nav(`/insights?ids=${r.insight_dataset_ids.join(",")}`)}>View combined insights</Button>
+      </div>
+      {r.relationships.length > 0 && (
+        <div className="rounded-lg border border-line p-3">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-ink2"><Link2 className="h-3.5 w-3.5" /> Linked automatically</div>
+          {r.relationships.map((x, i) => (
+            <div key={i} className="text-xs text-ink2">{x.from_dataset}<span className="font-mono text-muted">.{x.from_column}</span> → {x.to_dataset}<span className="font-mono text-muted">.{x.to_column}</span> <span className="text-muted">({Math.round(x.confidence * 100)}%)</span></div>
+          ))}
+        </div>
+      )}
+      {r.integrated && <Result items={[r.integrated]} />}
+      <Result items={r.datasets} />
+      {r.failed.map((f) => (
+        <div key={f.file} className="flex items-center gap-3 rounded-lg border border-line bg-surface2 p-3">
+          <XCircle className="h-5 w-5 text-critical" />
+          <div className="text-sm"><span className="font-medium">{f.file}</span> <span className="text-xs text-muted">– {f.error}</span></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const ACCEPT = [".csv", ".tsv", ".txt", ".xlsx", ".xls", ".json", ".parquet"];
+
 function FileUpload() {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState("");
   const [opts, setOpts] = useState(DEFAULTS);
+  const [integrate, setIntegrate] = useState(true);
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any[] | null>(null);
+  const [batch, setBatch] = useState<BatchResult | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const multi = files.length > 1;
 
-  const pick = (f: File | undefined) => {
-    if (!f) return;
-    setFile(f);
-    setName(f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "));
+  const add = (list: FileList | null) => {
+    if (!list?.length) return;
+    const incoming = Array.from(list).filter((f) => ACCEPT.some((e) => f.name.toLowerCase().endsWith(e)));
+    const skipped = list.length - incoming.length;
+    const next = [...files, ...incoming.filter((f) => !files.some((x) => x.name === f.name && x.size === f.size))].slice(0, 20);
+    setFiles(next);
+    if (next.length === 1) setName(next[0].name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "));
     setResult(null);
-    setError(null);
+    setBatch(null);
+    setError(skipped ? `${skipped} file(s) ignored – unsupported type` : null);
   };
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setDrag(false);
-    pick(e.dataTransfer.files?.[0]);
+    add(e.dataTransfer.files);
   };
   const upload = async () => {
-    if (!file) return;
+    if (!files.length) return;
     setBusy(true);
     setError(null);
     const fd = new FormData();
-    fd.append("file", file);
-    fd.append("name", name);
     fd.append("options", JSON.stringify(opts));
+    const onUploadProgress = (e: any) => setProgress(Math.round(((e.loaded ?? 0) / (e.total ?? 1)) * 100));
     try {
-      const r = await api.post("/api/datasets/upload", fd, { onUploadProgress: (e) => setProgress(Math.round(((e.loaded ?? 0) / (e.total ?? 1)) * 100)) });
-      setResult(r.data);
-      setFile(null);
+      if (multi) {
+        files.forEach((f) => fd.append("files", f));
+        fd.append("auto_integrate", String(integrate));
+        setBatch((await api.post("/api/datasets/upload-batch", fd, { onUploadProgress })).data);
+      } else {
+        fd.append("file", files[0]);
+        fd.append("name", name);
+        setResult((await api.post("/api/datasets/upload", fd, { onUploadProgress })).data);
+      }
+      setFiles([]);
     } catch (e) {
       setError(errMsg(e));
     } finally {
@@ -107,6 +166,7 @@ function FileUpload() {
       setProgress(0);
     }
   };
+  const total = files.reduce((s, f) => s + f.size, 0);
 
   return (
     <div className="space-y-4">
@@ -118,21 +178,41 @@ function FileUpload() {
         className={cx("flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition", drag ? "border-accent bg-accentsoft" : "border-line hover:bg-surface2")}
       >
         <UploadCloud className="h-8 w-8 text-accent" />
-        <div className="mt-2 text-sm font-medium">{file ? file.name : "Drop a file here or click to browse"}</div>
-        <div className="mt-1 text-xs text-muted">{file ? `${(file.size / 1024).toFixed(1)} KB` : "CSV, TSV, Excel (.xlsx/.xls – every sheet becomes a dataset), JSON, Parquet"}</div>
-        <input ref={input} type="file" className="hidden" accept=".csv,.tsv,.txt,.xlsx,.xls,.json,.parquet" onChange={(e) => pick(e.target.files?.[0])} />
+        <div className="mt-2 text-sm font-medium">{files.length ? `${files.length} file${files.length > 1 ? "s" : ""} selected · click or drop to add more` : "Drop one or more files here, or click to browse"}</div>
+        <div className="mt-1 text-xs text-muted">CSV, TSV, Excel (every sheet becomes a dataset), JSON, Parquet · up to 20 files at once</div>
+        <input ref={input} type="file" multiple className="hidden" accept={ACCEPT.join(",")} onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
       </div>
-      {file && (
+      {files.length > 0 && (
         <>
-          <Field label="Dataset name"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
+          <div className="divide-y divide-[var(--border)] rounded-lg border border-line">
+            {files.map((f) => (
+              <div key={f.name + f.size} className="flex items-center gap-3 px-3 py-2 text-sm">
+                <FileUp className="h-4 w-4 text-muted" />
+                <span className="min-w-0 flex-1 truncate">{f.name}</span>
+                <span className="tabular text-xs text-muted">{(f.size / 1024).toFixed(1)} KB</span>
+                <button onClick={() => setFiles(files.filter((x) => x !== f))} className="rounded p-1 text-muted hover:bg-surface2 hover:text-critical" aria-label={`Remove ${f.name}`}><X className="h-3.5 w-3.5" /></button>
+              </div>
+            ))}
+          </div>
+          {multi ? (
+            <label className="flex items-start gap-2 rounded-lg border border-line p-3 text-sm">
+              <input type="checkbox" className="mt-0.5" checked={integrate} onChange={(e) => setIntegrate(e.target.checked)} />
+              <span><span className="font-medium">Link related files automatically</span>
+                <span className="block text-xs text-muted">Shared keys (e.g. customer_id) are detected and the files are joined into one integrated dataset for cross-file insights.</span></span>
+            </label>
+          ) : (
+            <Field label="Dataset name"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
+          )}
           <EtlOptions value={opts} onChange={setOpts} />
           <Button variant="primary" onClick={upload} loading={busy} icon={<FileUp className="h-4 w-4" />}>
-            {busy ? (progress < 100 ? `Uploading ${progress}%` : "Running ETL pipeline…") : "Upload & run ETL"}
+            {busy ? (progress < 100 ? `Uploading ${progress}%` : multi ? `Running ETL on ${files.length} files…` : "Running ETL pipeline…")
+              : multi ? `Upload ${files.length} files (${(total / 1024 / 1024).toFixed(1)} MB) & analyse` : "Upload & run ETL"}
           </Button>
         </>
       )}
       {error && <ErrorBox>{error}</ErrorBox>}
       {result && <Result items={result} />}
+      {batch && <BatchSummary r={batch} />}
     </div>
   );
 }

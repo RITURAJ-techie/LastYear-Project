@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { Database, GitBranch, Home, LayoutDashboard, LogOut, Menu, Monitor, Moon, Sparkles, Sun, Table2, UploadCloud, Warehouse } from "lucide-react";
+import { Database, GitBranch, Home, LayoutDashboard, Lightbulb, LogOut, Menu, Monitor, Moon, Sparkles, Sun, Table2, UploadCloud, Warehouse } from "lucide-react";
 import { useAuth } from "../auth";
 import { useTheme } from "../theme";
 import { api } from "../api";
@@ -11,6 +11,7 @@ const NAV = [
   { to: "/sources", label: "Data Sources", icon: UploadCloud },
   { to: "/datasets", label: "Datasets", icon: Table2 },
   { to: "/dashboards", label: "Dashboards", icon: LayoutDashboard },
+  { to: "/insights", label: "Insights Hub", icon: Lightbulb },
   { to: "/ask", label: "Ask Your Data", icon: Sparkles },
   { to: "/warehouse", label: "Data Warehouse", icon: Warehouse },
   { to: "/pipelines", label: "ETL Pipelines", icon: GitBranch },

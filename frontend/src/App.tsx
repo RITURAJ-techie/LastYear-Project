@@ -13,6 +13,7 @@ import DashboardView from "./pages/DashboardView";
 import Ask from "./pages/Ask";
 import WarehousePage from "./pages/Warehouse";
 import Pipelines from "./pages/Pipelines";
+import InsightsHub from "./pages/InsightsHub";
 
 function Protected() {
   const { user, loading } = useAuth();
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/datasets/:id" element={<DatasetDetail />} />
             <Route path="/dashboards" element={<Dashboards />} />
             <Route path="/dashboards/:id" element={<DashboardView />} />
+            <Route path="/insights" element={<InsightsHub />} />
             <Route path="/ask" element={<Ask />} />
             <Route path="/warehouse" element={<WarehousePage />} />
             <Route path="/pipelines" element={<Pipelines />} />
